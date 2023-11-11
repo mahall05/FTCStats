@@ -70,6 +70,7 @@ public class Team {
         for(DriveTeam dt : driveTeams){
             dt.calcAll();
         }
+        writeData();
     }
     public void writeData(){
         Map<Integer, ArrayList<Double>> dataMap = new HashMap<Integer, ArrayList<Double>>();

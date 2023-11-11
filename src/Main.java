@@ -6,7 +6,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -15,6 +17,7 @@ import java.util.*;
 public class Main {
 
     Team redTeam;
+    private static final String statsFileName = "Drive Teams.xlsx";
 
     private void runSetup(){
         ArrayList<Match> matches = getMatches();
@@ -53,19 +56,20 @@ public class Main {
                     row.getCell(7)==null||row.getCell(7).getCellType()==CellType.BLANK?-1:(int) row.getCell(7).getNumericCellValue(),  // Auton Score
                     row.getCell(8)==null||row.getCell(8).getCellType()==CellType.BLANK?-1:(int) row.getCell(8).getNumericCellValue()   // Penalties
             ));
+            if(row.getCell(9)!=null && row.getCell(9).getStringCellValue().equals("**")){
+                matches.removeLast();
+            }
         }
         return matches;
     }
     private static XSSFSheet getSheet(String sheetName)
     {
-        String statsFileName = "Drive Teams.xlsx";
         XSSFWorkbook wb = getWorkbook(statsFileName);
-        try{
-            return wb.getSheet(sheetName);
-        }catch (NullPointerException e)
-        {
-            return wb.createSheet(sheetName);
+        XSSFSheet sheet = wb.getSheet(sheetName);
+        if(sheet == null){
+            sheet = wb.createSheet(sheetName);
         }
+        return sheet;
     }
 
     private static XSSFWorkbook getWorkbook(String fileName)
@@ -81,6 +85,16 @@ public class Main {
             return null;
         }
     }
+    private static void writeToWorkbook(XSSFWorkbook wb){
+        try{
+            FileOutputStream out = new FileOutputStream(new File(statsFileName));
+            wb.write(out);
+            out.close();
+            System.out.println("Successfully written");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 
     public Main(){
         run();
@@ -92,10 +106,12 @@ public class Main {
     public static void writeData(String sheetName, Map<Integer, ArrayList<Double>> sheetMap){
         XSSFSheet sheet = getSheet(sheetName);
 
-        for(int i = 1; i < sheetMap.size(); i++){
+        for(int i = 1; i < sheetMap.size()+1; i++){
             Row row = (sheet.getRow(i)==null?sheet.createRow(i):sheet.getRow(i));
             writeRow(row, sheetMap.get(i));
         }
+
+        writeToWorkbook(sheet.getWorkbook());
     }
 
     private static void writeRow(Row row, ArrayList<Double> d) {
@@ -104,5 +120,6 @@ public class Main {
             cell.setCellValue(d.get(i));
         }
     }
+
 
 }
