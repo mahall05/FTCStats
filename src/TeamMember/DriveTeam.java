@@ -9,6 +9,7 @@ public class DriveTeam {
     private Operator operator;
     private Coach coach;
     private ArrayList<Match> matchHistory;
+    private String name;
 
     /* Basic Averages */
     private double avgTotal;
@@ -49,7 +50,6 @@ public class DriveTeam {
         return (driver.getAvgPenalties()+operator.getAvgPenalties()+(coach==null?0:coach.getAvgPenalties()*0.5))/(coach==null?2:2.5);
     }
 
-    // TODO clearly weighted formula is wrong
     public void calcWeightedAverages(){
         weightedAvgTotal = calcWeightedAvgTotal();
         weightedAvgTeleop = calcWeightedAvgTeleop();
@@ -259,21 +259,23 @@ public class DriveTeam {
         return commons;
     }
 
-    public DriveTeam(Driver d, Operator o, Coach c, ArrayList<Match> matches){
-        this(d,o,c);
+    public DriveTeam(String name, Driver d, Operator o, Coach c, ArrayList<Match> matches){
+        this(name, d,o,c);
         matchHistory = findCommonMatches(matches);
     }
-    public DriveTeam(Driver d, Operator o, Coach c){
+    public DriveTeam(String name, Driver d, Operator o, Coach c){
+        this.name = name;
         this.driver = d;
         this.operator = o;
         this.coach = c;
     }
-    public DriveTeam(Driver d, Operator o){
+    public DriveTeam(String name, Driver d, Operator o){
+        this.name = name;
         this.driver = d;
         this.operator = o;
     }
-    public DriveTeam(Driver d, Operator o, ArrayList<Match> matches){
-        this(d, o, null, matches);
+    public DriveTeam(String name, Driver d, Operator o, ArrayList<Match> matches){
+        this(name, d, o, null, matches);
     }
 
     public String toStringWeighted(){
@@ -283,5 +285,8 @@ public class DriveTeam {
     public String toStringUnweighted(){
         return String.format("Driver: %-10s  Operator: %-10s  UnweightedAvgTotal: %-6.2f  UnweightedAvgTeleop: %-6.2f  UnweightedAvgAuton: %-6.2f  UnweightedAvgPenalties: %-6.2f",
                 driver.getName(), operator.getName(), avgTotal, avgTeleop, avgAuton, avgPenalties);
+    }
+    public String getName(){
+        return name;
     }
 }

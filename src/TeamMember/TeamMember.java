@@ -36,6 +36,19 @@ public abstract class TeamMember {
     private double weightedAvgAuton;
     private double weightedAvgPenalties;
 
+    public ArrayList<Double> getGroupedData(){
+        ArrayList<Double> a = new ArrayList<Double>();
+        a.add(avgTotal);
+        a.add(avgTeleop);
+        a.add(avgAuton);
+        a.add(avgPenalties);
+        a.add(weightedAvgTotal);
+        a.add(weightedAvgTeleop);
+        a.add(weightedAvgAuton);
+        a.add(weightedAvgPenalties);
+        return a;
+    }
+
     public TeamMember(String name, Type type){
         this.type = type;
         this.name = name;

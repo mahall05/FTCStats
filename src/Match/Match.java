@@ -57,6 +57,7 @@ public class Match {
                 c.addMatch(this);
             }
         }
+
     }
 
     public int getTotalScore(){

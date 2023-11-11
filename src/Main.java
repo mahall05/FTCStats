@@ -1,5 +1,6 @@
 import Match.Match;
 import TeamMember.*;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -12,47 +13,20 @@ import java.util.*;
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
-    public Driver[] drivers = {new Driver("Bredan"), new Driver("Erin"), new Driver("Luca")};
-    public Operator[] operators = {new Operator("Mason"), new Operator("Zoe"), new Operator("Cyrus")};
-    public Coach[] coaches = {new Coach("Caleb"), new Coach("Matt"), new Coach("Zach")};
-    public DriveTeam BM;
-    public DriveTeam EZ;
-    public DriveTeam LC;
+
+    Team redTeam;
 
     private void runSetup(){
         ArrayList<Match> matches = getMatches();
-        for(Match m : matches){
-            m.assign(drivers, operators, coaches);
-        }
-
-        BM = new DriveTeam(drivers[0], operators[0], coaches[0], matches);
-        EZ = new DriveTeam(drivers[1], operators[1], coaches[1], matches);
-        LC = new DriveTeam(drivers[2], operators[2], coaches[2], matches);
-    }
-    private void runAnalysis(){
-        for(int i = 0; i < drivers.length; i++){
-            drivers[i].calcAll();
-            operators[i].calcAll();
-            coaches[i].calcAll();
-        }
-
-        BM.calcAll();
-        EZ.calcAll();
-        LC.calcAll();
-    }
-    private void printData(){
-        System.out.println(BM.toStringUnweighted());
-        System.out.println(BM.toStringWeighted());
-        System.out.println(EZ.toStringUnweighted());
-        System.out.println(EZ.toStringWeighted());
-        System.out.println(LC.toStringUnweighted());
-        System.out.println(LC.toStringWeighted());
+        redTeam = new Team(new Driver[] {new Driver("Bredan"), new Driver("Erin"), new Driver("Luca")},
+                            new Operator[] {new Operator("Mason"), new Operator("Zoe"), new Operator("Cyrus")},
+                            new Coach[] {new Coach("Caleb"), new Coach("Matt"), new Coach("Zach")},
+                            new String[][] {{"Bredan","Mason","Caleb"},{"Erin","Zoe","Matt"},{"Luca","Cyrus","Zach"}},
+                            matches);
     }
 
     private void run(){
         runSetup();
-        runAnalysis();
-        printData();
     }
 
     private ArrayList<Match> getMatches(){
@@ -82,28 +56,25 @@ public class Main {
         }
         return matches;
     }
-    private XSSFSheet getSheet(String sheetName)
+    private static XSSFSheet getSheet(String sheetName)
     {
         String statsFileName = "Drive Teams.xlsx";
         XSSFWorkbook wb = getWorkbook(statsFileName);
         try{
-            XSSFSheet sheet = wb.getSheet(sheetName);
-            return sheet;
+            return wb.getSheet(sheetName);
         }catch (NullPointerException e)
         {
-            System.out.println("Error loading sheet");
-            return null;
+            return wb.createSheet(sheetName);
         }
     }
 
-    private XSSFWorkbook getWorkbook(String fileName)
+    private static XSSFWorkbook getWorkbook(String fileName)
     {
         try{
             // Get the file input
             FileInputStream file = new FileInputStream(fileName);
             // Create a blank workbook from that file
-            XSSFWorkbook wb = new XSSFWorkbook(file);
-            return wb;
+            return new XSSFWorkbook(file);
         }catch (Exception e)
         {
             System.out.println("Error loading file");
@@ -118,50 +89,20 @@ public class Main {
         new Main();
     }
 
+    public static void writeData(String sheetName, Map<Integer, ArrayList<Double>> sheetMap){
+        XSSFSheet sheet = getSheet(sheetName);
 
-
-        /*
-        // Create blank workbook
-        XSSFWorkbook workbook = new XSSFWorkbook();
-
-        // Create blank sheet
-        XSSFSheet sheet = workbook.createSheet("Test Data");
-
-        // Prepare data to be written as an Object[]
-        Map<String, Object[]> data = new TreeMap<String, Object[]>();
-        data.put("1", new Object[] {"ID", "NAME", "LASTNAME"});
-        data.put("2", new Object[] {1, "Amit", "Shukla"});
-        data.put("3", new Object[] {2, "Lokesh", "Gupta"});
-        data.put("4", new Object[] {3, "John", "Adwards"});
-        data.put("5", new Object[] {4, "Brian", "Schultz"});
-
-        // Iterate over data and write to sheet
-        Set<String> keyset = data.keySet();
-        int rownum = 0;
-        for (String key : keyset)
-        {
-            Row row = sheet.createRow(rownum++);
-            Object[] objArr = data.get(key);
-            int cellnum = 0;
-            for (Object obj : objArr)
-            {
-                Cell cell = row.createCell(cellnum++);
-                if(obj instanceof String)
-                    cell.setCellValue((String)obj);
-                else if(obj instanceof Integer)
-                    cell.setCellValue((Integer)obj);
-            }
+        for(int i = 1; i < sheetMap.size(); i++){
+            Row row = (sheet.getRow(i)==null?sheet.createRow(i):sheet.getRow(i));
+            writeRow(row, sheetMap.get(i));
         }
+    }
 
-        // Write the workbook in file system
-        try{
-            FileOutputStream out = new FileOutputStream(new File("testsheet.xlsx"));
-            workbook.write(out);
-            out.close();
-            System.out.println("Successfully written");
+    private static void writeRow(Row row, ArrayList<Double> d) {
+        for (int i = 0; i < d.size(); i++) {
+            Cell cell = (row.getCell(i) == null ? row.createCell(i) : row.getCell(i));
+            cell.setCellValue(d.get(i));
         }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        */
+    }
+
 }
