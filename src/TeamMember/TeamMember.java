@@ -79,8 +79,10 @@ public abstract class TeamMember {
                 n += (1-weight*daysAgo);
             }
         }
-        totalSum = sum;
-        validTotals = n;
+        if(weight==0) {
+            totalSum = sum;
+            validTotals = n;
+        }
         return (n==0?0:sum/n);
     }
     private double calcAvgTeleop(double weight){
@@ -96,8 +98,11 @@ public abstract class TeamMember {
                 n += (1-weight*daysAgo);
             }
         }
-        teleopSum = sum;
-        validTeleops = n;
+
+        if(weight==0) {
+            teleopSum = sum;
+            validTeleops = n;
+        }
         return (n==0?0:sum/n);
     }
     private double calcAvgAuton(double weight){
@@ -113,8 +118,11 @@ public abstract class TeamMember {
                 n += (1-weight*daysAgo);
             }
         }
-        autonSum = sum;
-        validAutons = n;
+
+        if(weight==0) {
+            autonSum = sum;
+            validAutons = n;
+        }
         return (n==0?0:sum/n);
     }
     private double calcAvgPenalties(double weight){
@@ -130,8 +138,11 @@ public abstract class TeamMember {
                 n += (1-weight*daysAgo);
             }
         }
-        penaltySum = sum;
-        validAutons = n;
+
+        if(weight==0) {
+            penaltySum = sum;
+            validPenalties = n;
+        }
         return (n==0?0:sum/n);
     }
 
@@ -171,12 +182,10 @@ public abstract class TeamMember {
     }
 
     public double[] getRawSums(){
-        double[] sums = {totalSum, teleopSum, autonSum, penaltySum};
-        return sums;
+        return new double[] {totalSum, teleopSum, autonSum, penaltySum};
     }
     public double[] getRawValids(){
-        double[] valids = {validTotals, validTeleops, validAutons, validPenalties};
-        return valids;
+        return new double[] {validTotals, validTeleops, validAutons, validPenalties};
     }
 
     public enum Type{DRIVER, OPERATOR, COACH}

@@ -47,18 +47,6 @@ public class Main {
         System.out.println(EZ.toStringWeighted());
         System.out.println(LC.toStringUnweighted());
         System.out.println(LC.toStringWeighted());
-        /*
-        for(Driver d : drivers){
-            System.out.println(d);
-        }
-        for(Operator o : operators){
-            System.out.println(o);
-        }
-        for(Coach c : coaches){
-            System.out.println(c);
-        }
-
-         */
     }
 
     private void run(){
