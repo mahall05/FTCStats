@@ -1,6 +1,9 @@
 package UIElements;
 
 import Core.Main;
+import Core.Utilities;
+import TeamMember.Team;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +15,7 @@ import java.time.LocalDate;
 
 
 public class Window {
+    private Team[] teams;
     JFrame frame = new JFrame("FTCStats");
     private static final int HEIGHT = 700, WIDTH = HEIGHT*16/9;
     JButton spreadsheetButton;
@@ -59,7 +63,8 @@ public class Window {
     }
 
 
-    public Window(){
+    public Window(Team... teams){
+        this.teams = teams;
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(WIDTH, HEIGHT);
         frame.setLocationRelativeTo(null);
@@ -135,6 +140,8 @@ public class Window {
         char type = TypeListener.getType();
         String[] names = DriversListListener.getDrivers();
         double[] scores = TextListener.getScores();
-        Main.writeEntry(type, names, scores);
+
+        XSSFWorkbook wb = teams[0].getWorkbook();
+        Utilities.writeEntry(wb, "Match Data", type, names, scores);
     }
 }

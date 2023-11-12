@@ -4,6 +4,7 @@ import Core.Main;
 import Core.Utilities;
 import TeamMember.*;
 import Match.Match;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ public class Team {
     Coach[] coaches;
     DriveTeam[] driveTeams;
     ArrayList<Match> matches = new ArrayList<Match>();
+    XSSFWorkbook workbook; // The team's workbook
 
     /* Basic Averages */
     private double matchAvg;
@@ -28,18 +30,17 @@ public class Team {
     private double weightedAutonAvg;
     private double weightedPenaltyAvg;
 
-    public Team(Driver[] drivers, Operator[] operators, Coach[] coaches, DriveTeam[] driveTeams, ArrayList<Match> matches){
+    public Team(XSSFWorkbook wb, Driver[] drivers, Operator[] operators, Coach[] coaches, DriveTeam[] driveTeams){
+        this.workbook = wb;
         this.drivers = drivers;
         this.operators = operators;
         this.coaches = coaches;
         this.driveTeams = driveTeams;
-        this.matches = matches;
-        for(Match m : matches){
-            m.assign(drivers, operators, coaches);
-        }
+        this.matches = Utilities.getMatches(workbook, "Match Data");
         runSetup();
     }
-    public Team(Driver[] drivers, Operator[] operators, Coach[] coaches, String[][] dtNames, ArrayList<Match> matches){
+    public Team(XSSFWorkbook wb, Driver[] drivers, Operator[] operators, Coach[] coaches, String[][] dtNames){
+        this.workbook = wb;
         DriveTeam[] driveTeams = new DriveTeam[dtNames.length];
         for(Match m : matches){
             m.assign(drivers, operators, coaches);
@@ -48,19 +49,24 @@ public class Team {
         this.operators = operators;
         this.coaches = coaches;
         this.driveTeams = driveTeams;
-        this.matches = matches;
-        for(int i = 0; i < dtNames.length; i++){
-            driveTeams[i] = new DriveTeam(dtNames[i][0]+"+"+dtNames[i][1],(Driver) Utilities.findByName(drivers, dtNames[i][0]), (Operator) Utilities.findByName(operators, dtNames[i][1]), (Coach) Utilities.findByName(coaches, dtNames[i][2]),matches);
-        }
+        this.matches = Utilities.getMatches(workbook, "Match Data");
         runSetup();
     }
 
+    /**
+     * Begins the setup of the team's data. This is automatically called from the constructor
+     * Assigns the matches to their associated team members, and runs the calculations
+     */
     private void runSetup(){
         for(Match m : matches){
             m.assign(drivers, operators, coaches);
         }
         runCalculations();
     }
+
+    /**
+     * Runs the calculations of the drive teams. Calculates all the individual data, and then the drive team data
+     */
     private void runCalculations(){
         for(Driver d : drivers){
             d.calcAll();
@@ -74,9 +80,13 @@ public class Team {
         for(DriveTeam dt : driveTeams){
             dt.calcAll();
         }
-        writeData();
+        writeDataToSheet();
     }
-    public void writeData(){
+
+    /**
+     * Writes the data to the workbook
+     */
+    public void writeDataToSheet(){
         Map<Integer, ArrayList<Double>> dataMap = new HashMap<Integer, ArrayList<Double>>();
 
         int row = 1;
@@ -89,6 +99,10 @@ public class Team {
         for(Coach c : coaches){
             dataMap.put(row++, c.getGroupedData());
         }
-        Main.writeData("Per Member Data", dataMap);
+        Utilities.writeDatamapToSheet(Utilities.getSheetFromWorkbook(workbook, "Per Member Data"), dataMap);
+    }
+
+    public XSSFWorkbook getWorkbook(){
+        return workbook;
     }
 }
