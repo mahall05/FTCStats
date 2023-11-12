@@ -1,3 +1,7 @@
+package TeamMember;
+
+import Core.Main;
+import Core.Utilities;
 import TeamMember.*;
 import Match.Match;
 
@@ -46,7 +50,7 @@ public class Team {
         this.driveTeams = driveTeams;
         this.matches = matches;
         for(int i = 0; i < dtNames.length; i++){
-            driveTeams[i] = new DriveTeam(dtNames[i][0]+"+"+dtNames[i][1],(Driver) Util.findByName(drivers, dtNames[i][0]), (Operator) Util.findByName(operators, dtNames[i][1]), (Coach) Util.findByName(coaches, dtNames[i][2]),matches);
+            driveTeams[i] = new DriveTeam(dtNames[i][0]+"+"+dtNames[i][1],(Driver) Utilities.findByName(drivers, dtNames[i][0]), (Operator) Utilities.findByName(operators, dtNames[i][1]), (Coach) Utilities.findByName(coaches, dtNames[i][2]),matches);
         }
         runSetup();
     }

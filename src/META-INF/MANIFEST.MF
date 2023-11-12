@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Main-Class: Main
+Core.Main-Class: Core.Main
 Class-Path: commons-logging-1.2.jar commons-compress-1.21.jar curvesapi-
  1.07.jar commons-codec-1.15.jar log4j-api-2.18.0.jar SparseBitSet-1.2.j
  ar commons-math3-3.6.1.jar slf4j-api-1.7.36.jar jakarta.activation-2.0.

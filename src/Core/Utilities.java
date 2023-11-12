@@ -1,8 +1,8 @@
+package Core;
+
 import TeamMember.TeamMember;
 
-import java.util.ArrayList;
-
-public class Util {
+public class Utilities {
     public static TeamMember findByName(TeamMember[] members, String name){
         for(TeamMember m : members){
             if(m.getName().equalsIgnoreCase(name)){
