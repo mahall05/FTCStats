@@ -15,7 +15,7 @@ import java.time.LocalDate;
 
 
 public class Window {
-    private Team[] teams;
+    private Team[] teams; // TODO change this
     JFrame frame = new JFrame("FTCStats");
     private static final int HEIGHT = 700, WIDTH = HEIGHT*16/9;
     JButton spreadsheetButton;
@@ -76,7 +76,7 @@ public class Window {
 
         spreadsheetButton.addActionListener(new DriversListListener() {
             public void actionPerformed(ActionEvent e) {
-                Main.launchSpreadsheet();
+                Utilities.launchSpreadsheet("Red Team Data"); // TODO change this
             }
         });
         spreadsheetButton.setSize(spButtonSize);
@@ -141,6 +141,7 @@ public class Window {
         String[] names = DriversListListener.getDrivers();
         double[] scores = TextListener.getScores();
 
+        //TODO change this
         XSSFWorkbook wb = teams[0].getWorkbook();
         Utilities.writeEntry(wb, "Match Data", type, names, scores);
     }
