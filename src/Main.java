@@ -6,9 +6,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -28,8 +30,9 @@ public class Main {
                             matches);
     }
 
-    private void run(){
-        runSetup();
+    private void run() {
+        //runSetup();
+        Window window = new Window();
     }
 
     private ArrayList<Match> getMatches(){
@@ -78,7 +81,9 @@ public class Main {
             // Get the file input
             FileInputStream file = new FileInputStream(fileName);
             // Create a blank workbook from that file
-            return new XSSFWorkbook(file);
+            XSSFWorkbook wb = new XSSFWorkbook(file);
+            file.close();
+            return wb;
         }catch (Exception e)
         {
             System.out.println("Error loading file");
@@ -87,13 +92,31 @@ public class Main {
     }
     private static void writeToWorkbook(XSSFWorkbook wb){
         try{
-            FileOutputStream out = new FileOutputStream(new File(statsFileName));
+            File file = new File(statsFileName);
+            FileOutputStream out = new FileOutputStream(file);
             wb.write(out);
             out.close();
             System.out.println("Successfully written");
         }catch(Exception e){
-            e.printStackTrace();
+            System.out.println("FAILED TO SAVE: FILE OPENED IN ANOTHER PROGRAM");
         }
+    }
+    public static void writeEntry(char type, String[] names, double[] scores){
+        XSSFSheet sheet = getSheet("Match Data");
+        int i = 0;
+        while(sheet.getRow(i)!=null) i++;
+        Row row = sheet.createRow(i);
+        row.createCell(0).setCellValue(String.valueOf(type));
+        row.createCell(1);
+
+        for(int j = 0; j < names.length; j++){
+            row.createCell(j+2).setCellValue(names[j]);
+        }
+        for(int j = 0; j < scores.length; j++){
+            System.out.println(scores[j]);
+            row.createCell(j+2+names.length).setCellValue(scores[j]);
+        }
+        writeToWorkbook(sheet.getWorkbook());
     }
 
     public Main(){
@@ -118,6 +141,15 @@ public class Main {
         for (int i = 0; i < d.size(); i++) {
             Cell cell = (row.getCell(i) == null ? row.createCell(i) : row.getCell(i));
             cell.setCellValue(d.get(i));
+        }
+    }
+
+    public static void launchSpreadsheet(){
+        Desktop d = Desktop.getDesktop();
+        try{
+            d.open(new File(statsFileName));
+        }catch(Exception e){
+            System.out.println("Error opening file");
         }
     }
 
