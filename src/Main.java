@@ -20,6 +20,7 @@ public class Main {
 
     Team redTeam;
     private static final String statsFileName = "Drive Teams.xlsx";
+    private Window window;
 
     private void runSetup(){
         ArrayList<Match> matches = getMatches();
@@ -30,9 +31,15 @@ public class Main {
                             matches);
     }
 
-    private void run() {
+    private void start() {
         //runSetup();
-        Window window = new Window();
+        window = new Window();
+        run();
+    }
+    private void run(){
+        while(true){
+            window.update();
+        }
     }
 
     private ArrayList<Match> getMatches(){
@@ -120,7 +127,7 @@ public class Main {
     }
 
     public Main(){
-        run();
+        start();
     }
     public static void main(String[] args) {
         new Main();
