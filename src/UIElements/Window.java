@@ -16,6 +16,7 @@ import java.time.LocalDate;
 
 public class Window {
     private Team[] teams; // TODO change this
+    private Main main;
     JFrame frame = new JFrame("FTCStats");
     private static final int HEIGHT = 700, WIDTH = HEIGHT*16/9;
     JButton spreadsheetButton;
@@ -63,7 +64,8 @@ public class Window {
     }
 
 
-    public Window(Team... teams){
+    public Window(Main main, Team... teams){
+        this.main = main;
         this.teams = teams;
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(WIDTH, HEIGHT);
@@ -76,7 +78,7 @@ public class Window {
 
         spreadsheetButton.addActionListener(new DriversListListener() {
             public void actionPerformed(ActionEvent e) {
-                Utilities.launchSpreadsheet("Red Team Data"); // TODO change this
+                main.saveAndLaunch();
             }
         });
         spreadsheetButton.setSize(spButtonSize);

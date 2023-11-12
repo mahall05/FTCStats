@@ -277,6 +277,7 @@ public class DriveTeam {
     public DriveTeam(String name, Driver d, Operator o, ArrayList<Match> matches){
         this(name, d, o, null, matches);
     }
+    public DriveTeam(Driver d, Operator o, Coach c, ArrayList<Match> matches){this(d.getName()+"+"+o.getName(),d,o,c,matches);}
 
     public String toStringWeighted(){
         return String.format("Driver: %-10s  Operator: %-10s  WeightedAvgTotal: %-6.2f  WeightedAvgTeleop: %-6.2f  WeightedAvgAuton: %-6.2f  WeightedAvgPenalties: %-6.2f",

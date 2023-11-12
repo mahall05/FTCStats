@@ -4,6 +4,7 @@ import Core.Main;
 import Core.Utilities;
 import TeamMember.*;
 import Match.Match;
+import jdk.jshell.execution.Util;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.util.ArrayList;
@@ -42,12 +43,12 @@ public class Team {
     public Team(XSSFWorkbook wb, Driver[] drivers, Operator[] operators, Coach[] coaches, String[][] dtNames){
         this.workbook = wb;
         DriveTeam[] driveTeams = new DriveTeam[dtNames.length];
-        for(Match m : matches){
-            m.assign(drivers, operators, coaches);
-        }
         this.drivers = drivers;
         this.operators = operators;
         this.coaches = coaches;
+        for(int i = 0; i < driveTeams.length; i++){
+            driveTeams[i] = new DriveTeam((Driver) Utilities.findByName(drivers,dtNames[i][0]), (Operator) Utilities.findByName(operators,dtNames[i][1]), (Coach) Utilities.findByName(coaches, dtNames[i][2]), matches);
+        }
         this.driveTeams = driveTeams;
         this.matches = Utilities.getMatches(workbook, "Match Data");
         runSetup();
@@ -100,6 +101,10 @@ public class Team {
             dataMap.put(row++, c.getGroupedData());
         }
         Utilities.writeDatamapToSheet(Utilities.getSheetFromWorkbook(workbook, "Per Member Data"), dataMap);
+    }
+
+    public void saveWorkbook(){
+        Utilities.writeWorkbookToSpreadsheet("Red Team Data.xlsx", workbook);
     }
 
     public XSSFWorkbook getWorkbook(){

@@ -26,7 +26,7 @@ public class Main {
 
     private void runSetup(){
         XSSFWorkbook redTeamWorkbook = Utilities.getWorkbookFromFile(redTeamFileName);
-        window = new Window();
+        window = new Window(this, redTeam);
 
         redTeam = new Team(redTeamWorkbook,
                             new Driver[] {new Driver("Bredan"), new Driver("Erin"), new Driver("Luca")},
@@ -43,6 +43,11 @@ public class Main {
         while(true){
             window.update();
         }
+    }
+
+    public void saveAndLaunch(){
+        redTeam.saveWorkbook();
+        Utilities.launchSpreadsheet("Red Team Data.xlsx");
     }
 
     private Main(){
