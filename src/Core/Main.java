@@ -34,7 +34,7 @@ public class Main {
     }
 
     private void start() {
-        //runSetup();
+        runSetup();
         window = new Window();
         run();
     }
@@ -108,6 +108,7 @@ public class Main {
             System.out.println("Successfully written");
         }catch(Exception e){
             System.out.println("FAILED TO SAVE: FILE OPENED IN ANOTHER PROGRAM");
+            //e.printStackTrace();
         }
     }
     public static void writeEntry(char type, String[] names, double[] scores){
