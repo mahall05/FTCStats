@@ -29,17 +29,21 @@ public class DriveTeam {
         a.add(avgTeleop);
         a.add(avgAuton);
         a.add(avgPenalties);
+        /*
         a.add(weightedAvgTotal);
         a.add(weightedAvgTeleop);
         a.add(weightedAvgAuton);
         a.add(weightedAvgPenalties);
+        */
         return a;
     }
 
     public void calcAll(){
         calcBasicAverages();
-        if(matchHistory != null) calcWeightedAverages();
-        else System.out.println("False");
+        //if(matchHistory != null) calcWeightedAverages();
+        //else System.out.println("False");
+
+        //System.out.println(toStringWeighted());
     }
 
     /**
@@ -70,197 +74,169 @@ public class DriveTeam {
         weightedAvgAuton = calcWeightedAvgAuton();
         weightedAvgPenalties = calcWeightedAvgPenalties();
     }
+
     public double calcWeightedAvgTotal(){
-        // Get raw data
-        double[] totalSums = {driver.getRawSums()[0], operator.getRawSums()[0], coach.getRawSums()[0]};
-        double[] valids = {driver.getRawValids()[0], operator.getRawValids()[0], coach.getRawValids()[0]};
-
-        double[][] averages = new double[3][3];
-        /*SoloAvg   Driver   Operator  Coach
-        * DuoAvg    Driver   Operator  Coach
-        * TrioAvg   Driver   Operator  Coach */
-
-        // Subtract the overlapping matches
-        for(Match m : matchHistory){
-            valids[0]--;
-            valids[1]--;
-            totalSums[0] -= m.getTotalScore();
-            totalSums[1] -= m.getTotalScore();
-
-            if(m.getCoach().equals(coach)){
-                valids[2]--;
-                totalSums[2] -= m.getTotalScore();
-            }
-        }
-        averages[0][0] = (valids[0]==0?0:totalSums[0]/valids[0]);
-        averages[0][1] = (valids[1]==0?0:totalSums[1]/valids[1]);
-        averages[0][2] = (valids[2]==0?0:totalSums[2]/valids[2]);
-        //System.out.println("Erin Solo: "+averages[0][0]+"  Zoe Solo: "+averages[1][0]+"  Matt Solo"+averages[2][0]);
-
         double duoSum = 0;
         double trioSum = 0;
+        double duoMatches = 0;
         double trioMatches = 0;
 
-        for(Match m : matchHistory){
-            if(!(m.getCoach()==this.coach)) {
-                duoSum += m.getTotalScore();
-            }else{
-                trioSum += m.getTotalScore();
+        for(int i = 0; i < matchHistory.size(); i++){
+            if(matchHistory.get(i).getCoach().equals(this.coach)){ // If the match has the correct coach, this is a trio
+                trioSum += matchHistory.get(i).getTotalScore();
                 trioMatches++;
+            }else{   // Otherwise, this is just a duo
+                duoSum += matchHistory.get(i).getTotalScore();
+                duoMatches++;
             }
         }
+        double duoAvg = duoSum/(duoMatches==0?1:duoMatches);
+        double trioAvg = trioSum/(trioMatches==0?1:trioMatches);
+        double[] soloAverages = {
+                (driver.getRawSums()[0]-duoSum-trioSum)/((driver.getRawSums()[0]+1==duoSum+trioSum && driver.getRawValids()[0]==duoMatches+trioMatches?1:driver.getRawValids()[0]-duoMatches-trioMatches+1)),
+                (operator.getRawSums()[0]-duoSum-trioSum)/((operator.getRawSums()[0]+1==duoSum+trioSum && operator.getRawValids()[0]==duoMatches+trioMatches?1:operator.getRawValids()[0]-duoMatches-trioMatches+1)),
+                (coach.getRawSums()[0]-duoSum-trioSum)/((coach.getRawSums()[0]+1==duoSum+trioSum && coach.getRawValids()[0]==duoMatches+trioMatches?1:coach.getRawValids()[0]-duoMatches-trioMatches+1))
+        };
 
-        return avg(averages, duoSum, trioSum, trioMatches);
+        // Right now the coach is weighted just as heavy as the drivers
+        double combinedSoloAverages = (soloAverages[0]+soloAverages[1]+soloAverages[2]) /
+                                (3-(soloAverages[0]==0?1:0)-(soloAverages[1]==0?1:0)-(soloAverages[2]==0?1:0));
+
+        // Duo Avg is the average for both the driver and operator
+        // duoAvg = duoAvg * 2 / 2; two people with duoAvg, then divide by 2 for average
+
+        // Right now the coach is just as heavy as the drivers
+        // trioAvg = trioAvg * 3 / 3; three people with trioAvg, then divide by 3 for average
+
+        int[] weights = {1, 2, 3};
+        double overallAvg = (combinedSoloAverages*weights[0] + duoAvg*weights[1] + trioAvg*weights[2]) /
+                (weights[0]*(combinedSoloAverages==0?0:1) + weights[1]*(duoAvg==0?0:1) + weights[2]*(trioAvg==0?0:1));
+
+        return overallAvg;
     }
+
     public double calcWeightedAvgTeleop(){
-        // Get raw data
-        double[] totalSums = {driver.getRawSums()[1], operator.getRawSums()[1], coach.getRawSums()[1]};
-        double[] valids = {driver.getRawValids()[1], operator.getRawValids()[1], coach.getRawValids()[1]};
-
-        double[][] averages = new double[3][3];
-        /*SoloAvg   Driver   Operator  Coach
-         * DuoAvg    Driver   Operator  Coach
-         * TrioAvg   Driver   Operator  Coach */
-
-        // Subtract the overlapping matches
-        for(Match m : matchHistory){
-            valids[0]--;
-            valids[1]--;
-            totalSums[0] -= m.getTeleopScore();
-            totalSums[1] -= m.getTeleopScore();
-
-            if(m.getCoach().equals(coach)){
-                valids[2]--;
-                totalSums[2] -= m.getTeleopScore();
-            }
-        }
-        averages[0][0] = (valids[0]==0?0:totalSums[0]/valids[0]);
-        averages[0][1] = (valids[1]==0?0:totalSums[1]/valids[1]);
-        averages[0][2] = (valids[2]==0?0:totalSums[2]/valids[2]);
-        //System.out.println("Erin Solo: "+averages[0][0]+"  Zoe Solo: "+averages[1][0]+"  Matt Solo"+averages[2][0]);
-
         double duoSum = 0;
         double trioSum = 0;
+        double duoMatches = 0;
         double trioMatches = 0;
 
-        for(Match m : matchHistory){
-            if(!(m.getCoach()==this.coach)) {
-                duoSum += m.getTeleopScore();
-            }else{
-                trioSum += m.getTeleopScore();
+        for(int i = 0; i < matchHistory.size(); i++){
+            if(matchHistory.get(i).getCoach().equals(this.coach)){ // If the match has the correct coach, this is a trio
+                trioSum += matchHistory.get(i).getTeleopScore();
                 trioMatches++;
+            }else{   // Otherwise, this is just a duo
+                duoSum += matchHistory.get(i).getTeleopScore();
+                duoMatches++;
             }
         }
+        double duoAvg = duoSum/(duoMatches==0?1:duoMatches);
+        double trioAvg = trioSum/(trioMatches==0?1:trioMatches);
 
-        return avg(averages, duoSum, trioSum, trioMatches);
+
+        double[] soloAverages = {
+                (driver.getRawSums()[1]-duoSum-trioSum)/((driver.getRawValids()[1]+1==duoMatches+trioMatches?1:driver.getRawValids()[1]-duoMatches-trioMatches+1)),
+                (operator.getRawSums()[1]-duoSum-trioSum)/((operator.getRawValids()[1]+1==duoMatches+trioMatches?1:operator.getRawValids()[1]-duoMatches-trioMatches+1)),
+                (coach.getRawSums()[1]-duoSum-trioSum)/((coach.getRawValids()[1]+1==duoMatches+trioMatches?1:coach.getRawValids()[1]-duoMatches-trioMatches+1))
+        };
+
+        // Right now the coach is weighted just as heavy as the drivers
+        double combinedSoloAverages = (soloAverages[0]+soloAverages[1]+soloAverages[2]) /
+                (3-(soloAverages[0]==0?1:0)-(soloAverages[1]==0?1:0)-(soloAverages[2]==0?1:0));
+
+        // Duo Avg is the average for both the driver and operator
+        // duoAvg = duoAvg * 2 / 2; two people with duoAvg, then divide by 2 for average
+
+        // Right now the coach is just as heavy as the drivers
+        // trioAvg = trioAvg * 3 / 3; three people with trioAvg, then divide by 3 for average
+
+        int[] weights = {1, 2, 3};
+        double overallAvg = (combinedSoloAverages*weights[0] + duoAvg*weights[1] + trioAvg*weights[2]) /
+                (weights[0]*(combinedSoloAverages==0?0:1) + weights[1]*(duoAvg==0?0:1) + weights[2]*(trioAvg==0?0:1));
+
+        return overallAvg;
     }
+
     public double calcWeightedAvgAuton(){
-        // Get raw data
-        double[] totalSums = {driver.getRawSums()[2], operator.getRawSums()[2], coach.getRawSums()[2]};
-        double[] valids = {driver.getRawValids()[2], operator.getRawValids()[2], coach.getRawValids()[2]};
-
-        double[][] averages = new double[3][3];
-        /*SoloAvg   Driver   Operator  Coach
-         * DuoAvg    Driver   Operator  Coach
-         * TrioAvg   Driver   Operator  Coach */
-
-        // Subtract the overlapping matches
-        for(Match m : matchHistory){
-            valids[0]--;
-            valids[1]--;
-            totalSums[0] -= m.getAutonScore();
-            totalSums[1] -= m.getAutonScore();
-
-            if(m.getCoach().equals(coach)){
-                valids[2]--;
-                totalSums[2] -= m.getAutonScore();
-            }
-        }
-        averages[0][0] = (valids[0]==0?0:totalSums[0]/valids[0]);
-        averages[0][1] = (valids[1]==0?0:totalSums[1]/valids[1]);
-        averages[0][2] = (valids[2]==0?0:totalSums[2]/valids[2]);
-        //System.out.println("Erin Solo: "+averages[0][0]+"  Zoe Solo: "+averages[1][0]+"  Matt Solo"+averages[2][0]);
-
         double duoSum = 0;
         double trioSum = 0;
+        double duoMatches = 0;
         double trioMatches = 0;
 
-        for(Match m : matchHistory){
-            if(!(m.getCoach()==this.coach)) {
-                duoSum += m.getAutonScore();
-            }else{
-                trioSum += m.getAutonScore();
+        for(int i = 0; i < matchHistory.size(); i++){
+            if(matchHistory.get(i).getCoach().equals(this.coach)){ // If the match has the correct coach, this is a trio
+                trioSum += matchHistory.get(i).getAutonScore();
                 trioMatches++;
+            }else{   // Otherwise, this is just a duo
+                duoSum += matchHistory.get(i).getAutonScore();
+                duoMatches++;
             }
         }
+        double duoAvg = duoSum/(duoMatches==0?1:duoMatches);
+        double trioAvg = trioSum/(trioMatches==0?1:trioMatches);
+        double[] soloAverages = {
+                (driver.getRawSums()[2]-duoSum-trioSum)/((driver.getRawSums()[2]+1==duoSum+trioSum && driver.getRawValids()[2]==duoMatches+trioMatches?1:driver.getRawValids()[2]-duoMatches-trioMatches+1)),
+                (operator.getRawSums()[2]-duoSum-trioSum)/((operator.getRawSums()[2]+1==duoSum+trioSum && operator.getRawValids()[2]==duoMatches+trioMatches?1:operator.getRawValids()[2]-duoMatches-trioMatches+1)),
+                (coach.getRawSums()[2]-duoSum-trioSum)/((coach.getRawSums()[2]+1==duoSum+trioSum && coach.getRawValids()[2]==duoMatches+trioMatches?1:coach.getRawValids()[2]-duoMatches-trioMatches+1))
+        };
 
-        return avg(averages, duoSum, trioSum, trioMatches);
+        // Right now the coach is weighted just as heavy as the drivers
+        double combinedSoloAverages = (soloAverages[0]+soloAverages[1]+soloAverages[2]) /
+                (3-(soloAverages[0]==0?1:0)-(soloAverages[1]==0?1:0)-(soloAverages[2]==0?1:0));
+
+        // Duo Avg is the average for both the driver and operator
+        // duoAvg = duoAvg * 2 / 2; two people with duoAvg, then divide by 2 for average
+
+        // Right now the coach is just as heavy as the drivers
+        // trioAvg = trioAvg * 3 / 3; three people with trioAvg, then divide by 3 for average
+
+        int[] weights = {1, 2, 3};
+        double overallAvg = (combinedSoloAverages*weights[0] + duoAvg*weights[1] + trioAvg*weights[2]) /
+                (weights[0]*(combinedSoloAverages==0?0:1) + weights[1]*(duoAvg==0?0:1) + weights[2]*(trioAvg==0?0:1));
+
+        return overallAvg;
     }
+
     public double calcWeightedAvgPenalties(){
-        // Get raw data
-        double[] totalSums = {driver.getRawSums()[3], operator.getRawSums()[3], coach.getRawSums()[3]};
-        double[] valids = {driver.getRawValids()[3], operator.getRawValids()[3], coach.getRawValids()[3]};
-
-        double[][] averages = new double[3][3];
-        /*SoloAvg   Driver   Operator  Coach
-         * DuoAvg    Driver   Operator  Coach
-         * TrioAvg   Driver   Operator  Coach */
-
-        // Subtract the overlapping matches
-        for(Match m : matchHistory){
-            valids[0]--;
-            valids[1]--;
-            totalSums[0] -= m.getPenalties();
-            totalSums[1] -= m.getPenalties();
-
-            if(m.getCoach().equals(coach)){
-                valids[2]--;
-                totalSums[2] -= m.getPenalties();
-            }
-        }
-        averages[0][0] = (valids[0]==0?0:totalSums[0]/valids[0]);
-        averages[0][1] = (valids[1]==0?0:totalSums[1]/valids[1]);
-        averages[0][2] = (valids[2]==0?0:totalSums[2]/valids[2]);
-        //System.out.println("Erin Solo: "+averages[0][0]+"  Zoe Solo: "+averages[1][0]+"  Matt Solo"+averages[2][0]);
-
         double duoSum = 0;
         double trioSum = 0;
+        double duoMatches = 0;
         double trioMatches = 0;
 
-        for(Match m : matchHistory){
-            if(!(m.getCoach()==this.coach)) {
-                duoSum += m.getPenalties();
-            }else{
-                trioSum += m.getPenalties();
+        for(int i = 0; i < matchHistory.size(); i++){
+            if(matchHistory.get(i).getCoach().equals(this.coach)){ // If the match has the correct coach, this is a trio
+                trioSum += matchHistory.get(i).getPenalties();
                 trioMatches++;
+            }else{   // Otherwise, this is just a duo
+                duoSum += matchHistory.get(i).getPenalties();
+                duoMatches++;
             }
         }
+        double duoAvg = duoSum/(duoMatches==0?1:duoMatches);
+        double trioAvg = trioSum/(trioMatches==0?1:trioMatches);
+        double[] soloAverages = {
+                (driver.getRawSums()[3]-duoSum-trioSum)/((driver.getRawSums()[3]+1==duoSum+trioSum && driver.getRawValids()[3]==duoMatches+trioMatches?1:driver.getRawValids()[3]-duoMatches-trioMatches+1)),
+                (operator.getRawSums()[3]-duoSum-trioSum)/((operator.getRawSums()[3]+1==duoSum+trioSum && operator.getRawValids()[3]==duoMatches+trioMatches?1:operator.getRawValids()[3]-duoMatches-trioMatches+1)),
+                (coach.getRawSums()[3]-duoSum-trioSum)/((coach.getRawSums()[3]+1==duoSum+trioSum && coach.getRawValids()[3]==duoMatches+trioMatches?1:coach.getRawValids()[3]-duoMatches-trioMatches+1))
+        };
 
-        return avg(averages, duoSum, trioSum, trioMatches);
-    }
-    public double avg(double[][] a, double duoSum, double trioSum, double trioMatches){
-        a[1][0] = duoSum/(matchHistory.size()-trioMatches);
-        a[1][1] = duoSum/(matchHistory.size()-trioMatches);
-        //a[1][2] = duoSum/(matchHistory.size()-trioMatches);
-        a[2][0] = trioSum/trioMatches;
-        a[2][1] = trioSum/trioMatches;
-        a[2][2] = trioSum/trioMatches;
-        for(int i = 0; i < a.length; i++){
-            for(int j = 0; j < a[i].length; j++){
-                if(a[i][j]<0) a[i][j]=0;
-                //System.out.print(a[i][j]+"   ");
-            }
-            //System.out.println();
-        }
+        // Right now the coach is weighted just as heavy as the drivers
+        double combinedSoloAverages = (soloAverages[0]+soloAverages[1]+soloAverages[2]) /
+                (3-(soloAverages[0]==0?1:0)-(soloAverages[1]==0?1:0)-(soloAverages[2]==0?1:0));
 
-        double da = (a[0][0]*1+a[1][0]*2+a[2][0]*3)/(6-(a[0][0]==0?1:0)-(a[1][0]==0?2:0)-(a[2][0]==0?3:0));
-        double oa = (a[0][1]*1+a[1][1]*2+a[2][1]*3)/(6-(a[0][1]==0?1:0)-(a[1][1]==0?2:0)-(a[2][1]==0?3:0));
-        double ca = (a[0][2]*1+a[1][2]*2+a[2][2]*3)/(6-(a[0][2]==0?1:0)-(a[1][2]==0?2:0)-(a[2][2]==0?3:0));
-        da = Double.isNaN(da) ? 0 : da;
-        oa = Double.isNaN(oa) ? 0 : oa;
-        ca = Double.isNaN(ca) ? 0 : ca;
-        return (da*1+oa*1+ca*0.5)/2.5;
+        // Duo Avg is the average for both the driver and operator
+        // duoAvg = duoAvg * 2 / 2; two people with duoAvg, then divide by 2 for average
+
+        // Right now the coach is just as heavy as the drivers
+        // trioAvg = trioAvg * 3 / 3; three people with trioAvg, then divide by 3 for average
+
+        int[] weights = {1, 2, 3};
+        double overallAvg = (combinedSoloAverages*weights[0] + duoAvg*weights[1] + trioAvg*weights[2]) /
+                (weights[0]*(combinedSoloAverages==0?0:1) + weights[1]*(duoAvg==0?0:1) + weights[2]*(trioAvg==0?0:1));
+
+        return overallAvg;
     }
+
 
     private ArrayList<Match> findCommonMatches(ArrayList<Match> ms){
         ArrayList<Match> commons = new ArrayList<Match>();

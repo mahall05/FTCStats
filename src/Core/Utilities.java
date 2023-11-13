@@ -71,7 +71,7 @@ public class Utilities {
         ArrayList<Match> matches = new ArrayList<Match>();
 
         int maxRow = 1;
-        while (sheet.getRow(maxRow+1)!=null && sheet.getRow(maxRow+1).getCell(0).getCellType() != CellType.BLANK) {
+        while (sheet.getRow(maxRow+1)!=null && sheet.getRow(maxRow+1).getCell(0) != null && sheet.getRow(maxRow+1).getCell(0).getCellType() != CellType.BLANK) {
             maxRow++;
         }
 
