@@ -283,14 +283,6 @@ public class DriveTeam {
         this.operator = o;
         this.coach = c;
     }
-    public DriveTeam(String name, Driver d, Operator o){
-        this.name = name;
-        this.driver = d;
-        this.operator = o;
-    }
-    public DriveTeam(String name, Driver d, Operator o, ArrayList<Match> matches){
-        this(name, d, o, null, matches);
-    }
     public DriveTeam(Driver d, Operator o, Coach c, ArrayList<Match> matches){this(d.getName()+"+"+o.getName(),d,o,c,matches);}
 
     public String toStringWeighted(){

@@ -42,7 +42,7 @@ public class Team {
         }
 
         this.driveTeams = driveTeams;
-        runSetup();
+        runCalculations();
     }
     public Team(XSSFWorkbook wb, Driver[] drivers, Operator[] operators, Coach[] coaches, String[][] dtNames){
         this.workbook = wb;
@@ -59,17 +59,6 @@ public class Team {
             driveTeams[i] = new DriveTeam((Driver) Utilities.findByName(drivers,dtNames[i][0]), (Operator) Utilities.findByName(operators,dtNames[i][1]), (Coach) Utilities.findByName(coaches, dtNames[i][2]), matches);
         }
         this.driveTeams = driveTeams;
-        runSetup();
-    }
-
-    /**
-     * Begins the setup of the team's data. This is automatically called from the constructor
-     * Assigns the matches to their associated team members, and runs the calculations
-     */
-    private void runSetup(){
-        for(Match m : matches){
-            m.assign(drivers, operators, coaches);
-        }
         runCalculations();
     }
 
