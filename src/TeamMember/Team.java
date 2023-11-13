@@ -33,24 +33,32 @@ public class Team {
 
     public Team(XSSFWorkbook wb, Driver[] drivers, Operator[] operators, Coach[] coaches, DriveTeam[] driveTeams){
         this.workbook = wb;
+        this.matches = Utilities.getMatches(workbook, "Match Data");
         this.drivers = drivers;
         this.operators = operators;
         this.coaches = coaches;
+        for(Match m : matches){
+            m.assign(drivers, operators, coaches);
+        }
+
         this.driveTeams = driveTeams;
-        this.matches = Utilities.getMatches(workbook, "Match Data");
         runSetup();
     }
     public Team(XSSFWorkbook wb, Driver[] drivers, Operator[] operators, Coach[] coaches, String[][] dtNames){
         this.workbook = wb;
-        DriveTeam[] driveTeams = new DriveTeam[dtNames.length];
+        this.matches = Utilities.getMatches(workbook, "Match Data");
         this.drivers = drivers;
         this.operators = operators;
         this.coaches = coaches;
+        for(Match m : matches){
+            m.assign(drivers, operators, coaches);
+        }
+
+        DriveTeam[] driveTeams = new DriveTeam[dtNames.length];
         for(int i = 0; i < driveTeams.length; i++){
             driveTeams[i] = new DriveTeam((Driver) Utilities.findByName(drivers,dtNames[i][0]), (Operator) Utilities.findByName(operators,dtNames[i][1]), (Coach) Utilities.findByName(coaches, dtNames[i][2]), matches);
         }
         this.driveTeams = driveTeams;
-        this.matches = Utilities.getMatches(workbook, "Match Data");
         runSetup();
     }
 
