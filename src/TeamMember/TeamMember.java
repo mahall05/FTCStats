@@ -15,16 +15,6 @@ public abstract class TeamMember {
     private String name;
     private ArrayList<Match> matches;
 
-    private double totalSum;
-    private double teleopSum;
-    private double autonSum;
-    private double penaltySum;
-
-    private double validTotals;
-    private double validTeleops;
-    private double validAutons;
-    private double validPenalties;
-
     private double[] averages = new double[4];
 
     private double[] weightedAverages = new double[4];
@@ -99,12 +89,6 @@ public abstract class TeamMember {
     }
     public double[] getWeightedAverages(){
         return weightedAverages;
-    }
-    public double[] getRawSums(){
-        return new double[] {totalSum, teleopSum, autonSum, penaltySum};
-    }
-    public double[] getRawValids(){
-        return new double[] {validTotals, validTeleops, validAutons, validPenalties};
     }
 
     public enum Type{DRIVER, OPERATOR, COACH}

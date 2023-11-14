@@ -12,67 +12,51 @@ public class DriveTeam {
     private String name;
 
     /* Basic Averages */
-    private double avgTotal;
-    private double avgTeleop;
-    private double avgAuton;
-    private double avgPenalties;
+    // Total, teleop, auton, penalties
+    private double[] averages = new double[4];
 
     /* Averages Weighted by Team */
-    private double weightedAvgTotal;
-    private double weightedAvgTeleop;
-    private double weightedAvgAuton;
-    private double weightedAvgPenalties;
+    // Total, teleop, auton, penalties
+    private double[] weightedAverages = new double[4];
 
+    /**
+     * Get the Averages of Total, Teleop, Auton, Penalties, and weighted averages in that order
+     * Used to write the information to the workbook
+     * @return An ArrayList containing data associated with the drive team.
+     */
     public ArrayList<Double> getGroupedData(){
         ArrayList<Double> a = new ArrayList<Double>();
-        a.add(avgTotal);
-        a.add(avgTeleop);
-        a.add(avgAuton);
-        a.add(avgPenalties);
-        /*
-        a.add(weightedAvgTotal);
-        a.add(weightedAvgTeleop);
-        a.add(weightedAvgAuton);
-        a.add(weightedAvgPenalties);
-        */
+        for(Double d : averages){
+            a.add(d);
+        }
+        for(Double d : weightedAverages){
+            a.add(d);
+        }
         return a;
     }
 
-    /*
     public void calcAll(){
         calcBasicAverages();
+        for(int i = 0; i < weightedAverages.length; i++){
+            weightedAverages[i] = 0;
+        }
         //if(matchHistory != null) calcWeightedAverages();
         //else System.out.println("False");
 
         //System.out.println(toStringWeighted());
     }
 
-     */
-
     /**
      * Calculate averages using averages from driver, operator, and drive coach, with the drive coach impact having a lower weight
      */
-    /*
     public void calcBasicAverages(){
-        avgTotal = calcAvgTotal();
-        avgTeleop = calcAvgTeleop();
-        avgAuton = calcAvgAuton();
-        avgPenalties = calcAvgPenalties();
+        for(int i = 0; i < averages.length; i++){
+            averages[i] = calcAvg(TeamMember::getAverages, i);
+        }
     }
-    public double calcAvgTotal(){
-        return (driver.getAvgTotal()+operator.getAvgTotal()+(coach==null?0:coach.getAvgTotal()*0.5))/(coach==null?2:2.5);
+    private double calcAvg(AvgGetter ag, int i){
+        return (ag.get(driver)[i]+ag.get(operator)[i]+(coach==null?0:ag.get(coach)[i]*0.5))/(coach==null?2:2.5);
     }
-    public double calcAvgTeleop(){
-        return (driver.getAvgTeleop()+operator.getAvgTeleop()+(coach==null?0:coach.getAvgTeleop()*0.5))/(coach==null?2:2.5);
-    }
-    public double calcAvgAuton(){
-        return (driver.getAvgAuton()+operator.getAvgAuton()+(coach==null?0:coach.getAvgAuton()*0.5))/(coach==null?2:2.5);
-    }
-    public double calcAvgPenalties(){
-        return (driver.getAvgPenalties()+operator.getAvgPenalties()+(coach==null?0:coach.getAvgPenalties()*0.5))/(coach==null?2:2.5);
-    }
-
-     */
 
     /*
     public void calcWeightedAverages(){
@@ -270,6 +254,7 @@ public class DriveTeam {
     }
     public DriveTeam(Driver d, Operator o, Coach c, ArrayList<Match> matches){this(d.getName()+"+"+o.getName(),d,o,c,matches);}
 
+    /*
     public String toStringWeighted(){
         return String.format("Driver: %-10s  Operator: %-10s  WeightedAvgTotal: %-6.2f  WeightedAvgTeleop: %-6.2f  WeightedAvgAuton: %-6.2f  WeightedAvgPenalties: %-6.2f",
                 driver.getName(), operator.getName(), weightedAvgTotal, weightedAvgTeleop, weightedAvgAuton, weightedAvgPenalties);
@@ -278,7 +263,13 @@ public class DriveTeam {
         return String.format("Driver: %-10s  Operator: %-10s  UnweightedAvgTotal: %-6.2f  UnweightedAvgTeleop: %-6.2f  UnweightedAvgAuton: %-6.2f  UnweightedAvgPenalties: %-6.2f",
                 driver.getName(), operator.getName(), avgTotal, avgTeleop, avgAuton, avgPenalties);
     }
+
+     */
     public String getName(){
         return name;
+    }
+
+    private interface AvgGetter{
+        double[] get(TeamMember t);
     }
 }
