@@ -75,9 +75,12 @@ public class Team {
         for(Coach c : coaches){
             c.calcAll();
         }
+        /*
         for(DriveTeam dt : driveTeams){
             dt.calcAll();
         }
+
+         */
         writePerMemberData();
         writeDriveTeamData();
     }

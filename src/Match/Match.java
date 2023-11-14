@@ -18,11 +18,10 @@ public class Match {
     private String driveCoachString;
     private Coach driveCoach;
 
-    private int totalScore;
-    private int teleopScore;
-    private int autonScore;
-    private int penalties;
+    // Total, Teleop, Auton, Penalties
+    private int[] scores;
 
+    /*
     public Match(String type, LocalDate date, String driver, String operator, String driveCoach, int totalScore, int penalties){
         this(type, date, driver, operator, driveCoach, totalScore, -1, -1, penalties);
     }
@@ -36,6 +35,15 @@ public class Match {
         this.autonScore = autonScore;
         this.totalScore = totalScore;
         this.penalties = penalties;
+    }
+    */
+    public Match(String type, LocalDate date, String driver, String operator, String driveCoach, int[] scores){
+        this.type = (type.equalsIgnoreCase("p") ? Type.PRACTICE : Type.COMP);
+        this.date = date;
+        this.driverString = driver;
+        this.operatorString = operator;
+        this.driveCoachString = driveCoach;
+        this.scores = scores;
     }
 
     public void assign(Driver[] ds, Operator[] os, Coach[] cs){
@@ -60,18 +68,14 @@ public class Match {
 
     }
 
-    public int getTotalScore(){
-        return totalScore;
+    public int[] getScores(){
+        return scores;
     }
-    public int getTeleopScore(){
-        return teleopScore;
+    public int getScore(int i){
+        return scores[i];
     }
-    public int getAutonScore(){
-        return autonScore;
-    }
-    public int getPenalties(){
-        return penalties;
-    }
+
+
     public LocalDate getDate(){
         return date;
     }
@@ -85,9 +89,12 @@ public class Match {
         return driveCoach;
     }
 
+    /*
     public String toString(){
         return String.format(type.toString()+" "+dateString()+" "+driver.getName()+" "+operator.getName()+" "+driveCoach.getName()+" "+totalScore+" "+teleopScore+" "+autonScore+" "+penalties);
     }
+
+     */
 
     private String dateString(){
         String ds = date.toString();

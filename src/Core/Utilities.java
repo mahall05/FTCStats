@@ -85,10 +85,12 @@ public class Utilities {
                     row.getCell(2)==null||row.getCell(2).getCellType()==CellType.BLANK?"":row.getCell(2).getStringCellValue(),         // Driver
                     row.getCell(3)==null||row.getCell(3).getCellType()==CellType.BLANK?"":row.getCell(3).getStringCellValue(),         // Operator
                     row.getCell(4)==null||row.getCell(4).getCellType()==CellType.BLANK?"":row.getCell(4).getStringCellValue(),         // Drive Coach
-                    row.getCell(5)==null||row.getCell(5).getCellType()==CellType.BLANK?-1:(int) row.getCell(5).getNumericCellValue(),  // Total Score
-                    row.getCell(6)==null||row.getCell(6).getCellType()==CellType.BLANK?-1:(int) row.getCell(6).getNumericCellValue(),  // Teleop Score
-                    row.getCell(7)==null||row.getCell(7).getCellType()==CellType.BLANK?-1:(int) row.getCell(7).getNumericCellValue(),  // Auton Score
-                    row.getCell(8)==null||row.getCell(8).getCellType()==CellType.BLANK?-1:(int) row.getCell(8).getNumericCellValue()   // Penalties
+                    new int[] {
+                            row.getCell(5) == null || row.getCell(5).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(5).getNumericCellValue(),  // Total Score
+                            row.getCell(6) == null || row.getCell(6).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(6).getNumericCellValue(),  // Teleop Score
+                            row.getCell(7) == null || row.getCell(7).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(7).getNumericCellValue(),  // Auton Score
+                            row.getCell(8) == null || row.getCell(8).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(8).getNumericCellValue()   // Penalties
+                    }
             ));
             if(row.getCell(9)!=null && row.getCell(9).getStringCellValue().equals("**")){
                 matches.removeLast();

@@ -38,6 +38,7 @@ public class DriveTeam {
         return a;
     }
 
+    /*
     public void calcAll(){
         calcBasicAverages();
         //if(matchHistory != null) calcWeightedAverages();
@@ -46,9 +47,12 @@ public class DriveTeam {
         //System.out.println(toStringWeighted());
     }
 
+     */
+
     /**
      * Calculate averages using averages from driver, operator, and drive coach, with the drive coach impact having a lower weight
      */
+    /*
     public void calcBasicAverages(){
         avgTotal = calcAvgTotal();
         avgTeleop = calcAvgTeleop();
@@ -68,6 +72,9 @@ public class DriveTeam {
         return (driver.getAvgPenalties()+operator.getAvgPenalties()+(coach==null?0:coach.getAvgPenalties()*0.5))/(coach==null?2:2.5);
     }
 
+     */
+
+    /*
     public void calcWeightedAverages(){
         weightedAvgTotal = calcWeightedAvgTotal();
         weightedAvgTeleop = calcWeightedAvgTeleop();
@@ -236,6 +243,8 @@ public class DriveTeam {
 
         return overallAvg;
     }
+
+ */
 
 
     private ArrayList<Match> findCommonMatches(ArrayList<Match> ms){
