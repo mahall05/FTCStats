@@ -183,9 +183,9 @@ public class Utilities {
      * @param sheet The XSSFSheet to be written to
      * @param sheetMap The Map containing double values to be written into the sheet
      */
-    public static void writeDatamapToSheet(XSSFSheet sheet, Map<Integer, ArrayList<Double>> sheetMap){
-        for(int i = 1; i < sheetMap.size()+1; i++){
-            Row row = (sheet.getRow(i)==null?sheet.createRow(i):sheet.getRow(i));
+    public static void writeDatamapToSheet(int offset, XSSFSheet sheet, Map<Integer, ArrayList<Double>> sheetMap){
+        for(int i = 0; i < sheetMap.size(); i++){
+            Row row = (sheet.getRow(i+offset)==null?sheet.createRow(i+offset):sheet.getRow(i+offset));
             writeDataToRow(row, sheetMap.get(i));
         }
     }

@@ -88,7 +88,7 @@ public class Team {
     public void writePerMemberData(){
         Map<Integer, ArrayList<Double>> dataMap = new HashMap<Integer, ArrayList<Double>>();
 
-        int row = 1;
+        int row = 0;
         for(Driver d : drivers){
             dataMap.put(row++, d.getGroupedData());
         }
@@ -98,7 +98,7 @@ public class Team {
         for(Coach c : coaches){
             dataMap.put(row++, c.getGroupedData());
         }
-        Utilities.writeDatamapToSheet(Utilities.getSheetFromWorkbook(workbook, "Per Member Data"), dataMap);
+        Utilities.writeDatamapToSheet(2, Utilities.getSheetFromWorkbook(workbook, "Per Member Data"), dataMap);
     }
 
     /**
@@ -107,11 +107,11 @@ public class Team {
     public void writeDriveTeamData(){
         Map<Integer, ArrayList<Double>> dataMap = new HashMap<Integer, ArrayList<Double>>();
 
-        int row = 1;
+        int row = 0;
         for(DriveTeam dt : driveTeams){
             dataMap.put(row++, dt.getGroupedData());
         }
-        Utilities.writeDatamapToSheet(Utilities.getSheetFromWorkbook(workbook, "Drive Team Data"), dataMap);
+        Utilities.writeDatamapToSheet(2, Utilities.getSheetFromWorkbook(workbook, "Drive Team Data"), dataMap);
     }
 
     public void saveWorkbook(){
