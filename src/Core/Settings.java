@@ -6,6 +6,13 @@ public class Settings {
     // Change weight of competition matches vs practice matches
     // Change weight of new matches with the new robot
 
+    /* Match Settings */
+
+    /* The relative weight of practice matches when compared to real competition matches */
+    public static double relativePracticeWeight = 0.5;
+    /* The relative weight of matches with the old robot when compared to the new robot */
+    public static double relativeOldRobotWeight = 1;
+
     /* Team Member Settings */
     public static double dateWeight = 0.0294117647;
 

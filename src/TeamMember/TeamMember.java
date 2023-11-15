@@ -47,22 +47,22 @@ public abstract class TeamMember {
 
     public void calcAll(){
         for(int i = 0; i < averages.length; i++){
-            averages[i] = calcAverage(0, Match::getScores, i);
-            weightedAverages[i] = calcAverage(Settings.dateWeight, Match::getScores, i);
+            averages[i] = calcAverage(0, i);
+            //weightedAverages[i] = calcAverage(Settings.dateWeight, i);
         }
     }
 
-    private double calcAverage(double weight, AvgGetter ag, int i){
+    private double calcAverage(double weight, int i){
         double sum = 0;
         double n = 0;
 
         for(Match m : matches){
-            double s = ag.get(m)[i];
+            double s = m.getWeightedScore(i);
             long daysAgo = ChronoUnit.DAYS.between(m.getDate(), LocalDate.now());
 
             if(s>=0){
-                sum += (s*(1-weight*daysAgo));
-                n += (1-weight*daysAgo);
+                sum += s*(1-Settings.dateWeight*daysAgo);
+                n += m.getRelativeWeight()*(1-Settings.dateWeight*daysAgo);
             }
         }
         if(weight == 0) {
@@ -92,13 +92,6 @@ public abstract class TeamMember {
     }
 
     public enum Type{DRIVER, OPERATOR, COACH}
-
-    private interface NumGetter{
-        int get(Match m);
-    }
-    private interface AvgGetter{
-        int[] get(Match m);
-    }
 
     public double[] getDividends(){
         return dividends;

@@ -23,10 +23,6 @@ public class DriveTeam {
     //private double[] duoSums = new double[4];
     //private double[] nonZeroDuos = new double[4];
 
-    private double[] duoAverages = new double[4];
-    private double[] duoStdDevs = new double[4];
-    private double[] duoSampleSizes = new double[4];
-
     /**
      * Get the Averages of Total, Teleop, Auton, Penalties, and weighted averages in that order
      * Used to write the information to the workbook
@@ -40,11 +36,6 @@ public class DriveTeam {
         for(Double d : weightedAverages){
             a.add(d);
         }
-        for(int i = 0; i < duoAverages.length; i++){
-            a.add(duoAverages[i]);
-            a.add(duoStdDevs[i]);
-            a.add(duoSampleSizes[i]);
-        }
         return a;
     }
 
@@ -56,7 +47,6 @@ public class DriveTeam {
         if(matchHistory != null)
             for(int i = 0; i < weightedAverages.length; i++) {
                 weightedAverages[i] = calcWeightedAverage(TeamMember::getDividends, TeamMember::getDivisors, i);
-                calcDuoOnlyData(i);
             }
         else System.out.println("False");
 
@@ -111,43 +101,6 @@ public class DriveTeam {
         totalAverage = Double.isNaN(totalAverage) ? 0 : totalAverage;
 
         return totalAverage;
-    }
-
-    public void calcDuoOnlyData(int i){
-        double scoreSum = 0;
-        double valid = 0;
-
-        for(Match m : matchHistory){
-            double score = m.getScore(i);
-
-            if (score>=0){
-                scoreSum += score;
-                valid++;
-            }
-        }
-        double meanScore = scoreSum/valid;
-
-        ArrayList<Double> deviations = new ArrayList<Double>();
-        double validDeviations = 0;
-        for(Match m : matchHistory){
-            double score = m.getScore(i);
-
-            if(score>=0){
-                validDeviations++;
-                deviations.add(Math.abs(meanScore-score));
-            }
-        }
-
-        double squaredDeviationSum = 0;
-        for(Double d : deviations){
-            squaredDeviationSum += (d*d);
-        }
-        double variation = squaredDeviationSum / (validDeviations>30?validDeviations:validDeviations-1);
-        double standardDeviation = Math.sqrt(variation);
-
-        duoAverages[i] = meanScore;
-        duoStdDevs[i] = standardDeviation;
-        duoSampleSizes[i] = validDeviations;
     }
 
     private ArrayList<Match> findCommonMatches(ArrayList<Match> ms){

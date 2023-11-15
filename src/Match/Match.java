@@ -1,5 +1,6 @@
 package Match;
 
+import Core.Settings;
 import TeamMember.Coach;
 import TeamMember.Driver;
 import TeamMember.Operator;
@@ -18,25 +19,17 @@ public class Match {
     private String driveCoachString;
     private Coach driveCoach;
 
+    private double relativeWeight;
+
     // Total, Teleop, Auton, Penalties
     private int[] scores;
 
-    /*
-    public Match(String type, LocalDate date, String driver, String operator, String driveCoach, int totalScore, int penalties){
-        this(type, date, driver, operator, driveCoach, totalScore, -1, -1, penalties);
+    private void calcWeight(){
+        double weightFromOldRobot = date.isBefore(LocalDate.of(2023, 11, 14)) ? Settings.relativeOldRobotWeight : 1;
+        double weightFromType = type == Type.PRACTICE ? Settings.relativePracticeWeight : 1;
+        relativeWeight = 1.0 * weightFromType * weightFromOldRobot;
     }
-    public Match(String type, LocalDate date, String driver, String operator, String driveCoach, int totalScore, int teleopScore, int autonScore, int penalties){
-        this.type = (type.equalsIgnoreCase("p") ? Type.PRACTICE : Type.COMP);
-        this.date = date;
-        this.driverString = driver;
-        this.operatorString = operator;
-        this.driveCoachString = driveCoach;
-        this.teleopScore = teleopScore;
-        this.autonScore = autonScore;
-        this.totalScore = totalScore;
-        this.penalties = penalties;
-    }
-    */
+
     public Match(String type, LocalDate date, String driver, String operator, String driveCoach, int[] scores){
         this.type = (type.equalsIgnoreCase("p") ? Type.PRACTICE : Type.COMP);
         this.date = date;
@@ -44,6 +37,7 @@ public class Match {
         this.operatorString = operator;
         this.driveCoachString = driveCoach;
         this.scores = scores;
+        calcWeight();
     }
 
     public void assign(Driver[] ds, Operator[] os, Coach[] cs){
@@ -75,6 +69,12 @@ public class Match {
         return scores[i];
     }
 
+    public double getWeightedScore(int i){
+        return scores[i]*relativeWeight;
+    }
+    public double getRelativeWeight(){
+        return relativeWeight;
+    }
 
     public LocalDate getDate(){
         return date;
@@ -88,13 +88,6 @@ public class Match {
     public Coach getCoach(){
         return driveCoach;
     }
-
-    /*
-    public String toString(){
-        return String.format(type.toString()+" "+dateString()+" "+driver.getName()+" "+operator.getName()+" "+driveCoach.getName()+" "+totalScore+" "+teleopScore+" "+autonScore+" "+penalties);
-    }
-
-     */
 
     private String dateString(){
         String ds = date.toString();
