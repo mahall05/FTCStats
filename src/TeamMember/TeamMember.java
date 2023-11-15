@@ -17,7 +17,7 @@ public abstract class TeamMember {
 
     private double[] averages = new double[4];
 
-    private double[] weightedAverages = new double[4];
+    //private double[] weightedAverages = new double[4];
 
     private double[] dividends = new double[4];
     private double[] divisors = new double[4];
@@ -27,9 +27,12 @@ public abstract class TeamMember {
         for(Double d : averages){
             a.add(d);
         }
+        /*
         for(Double d : weightedAverages){
             a.add(d);
         }
+
+         */
         return a;
     }
 
@@ -39,7 +42,7 @@ public abstract class TeamMember {
 
         for(int i = 0; i < averages.length; i++){
             averages[i] = -1;
-            weightedAverages[i] = -1;
+            //weightedAverages[i] = -1;
         }
 
         matches = new ArrayList<Match>();
@@ -48,7 +51,6 @@ public abstract class TeamMember {
     public void calcAll(){
         for(int i = 0; i < averages.length; i++){
             averages[i] = calcAverage(0, i);
-            //weightedAverages[i] = calcAverage(Settings.dateWeight, i);
         }
     }
 
@@ -87,9 +89,12 @@ public abstract class TeamMember {
     public double[] getAverages(){
         return averages;
     }
+    /*
     public double[] getWeightedAverages(){
         return weightedAverages;
     }
+
+     */
 
     public enum Type{DRIVER, OPERATOR, COACH}
 

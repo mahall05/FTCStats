@@ -20,8 +20,9 @@ public class DriveTeam {
     // Total, teleop, auton, penalties
     private double[] weightedAverages = new double[4];
 
-    //private double[] duoSums = new double[4];
-    //private double[] nonZeroDuos = new double[4];
+    private double[] duoAverages = new double[4];
+    private double[] duoStdDevs = new double[4];
+    private double[] duoSampleSizes = new double[4];
 
     /**
      * Get the Averages of Total, Teleop, Auton, Penalties, and weighted averages in that order
@@ -36,6 +37,11 @@ public class DriveTeam {
         for(Double d : weightedAverages){
             a.add(d);
         }
+        for(int i = 0; i < duoAverages.length; i++){
+            a.add(duoAverages[i]);
+            a.add(duoStdDevs[i]);
+            a.add(duoSampleSizes[i]);
+        }
         return a;
     }
 
@@ -47,10 +53,50 @@ public class DriveTeam {
         if(matchHistory != null)
             for(int i = 0; i < weightedAverages.length; i++) {
                 weightedAverages[i] = calcWeightedAverage(TeamMember::getDividends, TeamMember::getDivisors, i);
+                calcDuoOnlyData(i);
             }
         else System.out.println("False");
 
         //System.out.println(toStringWeighted());
+    }
+
+    public void calcDuoOnlyData(int i){
+        double scoreSum = 0;
+        double valid = 0;
+
+        for(Match m : matchHistory){
+            double score = m.getWeightedScore(i);
+
+            if (score>=0){
+                scoreSum += score;
+                valid += m.getRelativeWeight();
+            }
+        }
+        double meanScore = scoreSum/valid;
+
+        ArrayList<Double> deviations = new ArrayList<Double>();
+        ArrayList<Double> weights = new ArrayList<Double>();
+        double validDeviations = 0;
+        for(Match m : matchHistory){
+            double score = m.getWeightedScore(i);
+
+            if(score>=0){
+                validDeviations += m.getRelativeWeight();
+                deviations.add(Math.abs(meanScore-score));
+                weights.add(m.getRelativeWeight());
+            }
+        }
+
+        double squaredDeviationSum = 0;
+        for(int j = 0; j < deviations.size(); j++){
+            squaredDeviationSum += (weights.get(j) * deviations.get(j));
+        }
+        double variation = squaredDeviationSum / (validDeviations>30?validDeviations:validDeviations-1);
+        double standardDeviation = Math.sqrt(variation);
+
+        duoAverages[i] = meanScore;
+        duoStdDevs[i] = standardDeviation;
+        duoSampleSizes[i] = validDeviations;
     }
 
     private double calcAvg(AvgGetter ag, int i){
@@ -64,16 +110,16 @@ public class DriveTeam {
         double validTrios = 0;
 
         for(Match m : matchHistory){
-            double s = m.getScores()[i];
+            double s = m.getWeightedScore(i);
 
             if(s >= 0){
                 if(m.getCoach().equals(this.coach)){
                     trioSum += s;
-                    validTrios++;
+                    validTrios += (m.getRelativeWeight());
                 }
                 else{
                     duoSum += s;
-                    validDuos++;
+                    validDuos += (m.getRelativeWeight());
                 }
             }
         }
