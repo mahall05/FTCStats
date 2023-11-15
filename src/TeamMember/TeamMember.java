@@ -1,5 +1,6 @@
 package TeamMember;
 
+import Core.Settings;
 import Match.Match;
 
 import java.time.Instant;
@@ -10,7 +11,6 @@ import java.util.Date;
 import java.util.function.Supplier;
 
 public abstract class TeamMember {
-    private final double DATE_WEIGHT = 0.0294117647;
     private Type type;
     private String name;
     private ArrayList<Match> matches;
@@ -45,17 +45,10 @@ public abstract class TeamMember {
         matches = new ArrayList<Match>();
     }
 
-    /*
-    public String toString(){
-        return String.format("%-10s AvgTotal: %-10.2f AvgTeleop: %-10.2f AvgAuton: %-10.2f AvgPenalties: %-10.2f\n           WeightedAvgTotal: %-10.2f WeightedAvgTeleop: %-10.2f WeightedAvgAuton: %-10.2f WeightedAvgPenalties: %-10.2f",name,avgTotal,avgTeleop,avgAuton,avgPenalties, weightedAvgTotal,weightedAvgTeleop,weightedAvgAuton,weightedAvgPenalties);
-    }
-    */
-
-
     public void calcAll(){
         for(int i = 0; i < averages.length; i++){
             averages[i] = calcAverage(0, Match::getScores, i);
-            weightedAverages[i] = calcAverage(DATE_WEIGHT, Match::getScores, i);
+            weightedAverages[i] = calcAverage(Settings.dateWeight, Match::getScores, i);
         }
     }
 

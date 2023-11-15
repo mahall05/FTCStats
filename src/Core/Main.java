@@ -20,12 +20,11 @@ import java.util.*;
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
 
-    private static final String redTeamFileName = "Red Team Data.xlsx";
     private Window window;
     private Team redTeam;
 
     private void runSetup(){
-        XSSFWorkbook redTeamWorkbook = Utilities.getWorkbookFromFile(redTeamFileName);
+        XSSFWorkbook redTeamWorkbook = Utilities.getWorkbookFromFile(Settings.redTeamDataFile);
         window = new Window(this, redTeam);
 
         redTeam = new Team(redTeamWorkbook,
@@ -47,7 +46,7 @@ public class Main {
 
     public void saveAndLaunch(){
         redTeam.saveWorkbook();
-        Utilities.launchSpreadsheet("Red Team Data.xlsx");
+        Utilities.launchSpreadsheet(Settings.redTeamDataFile);
     }
 
     private Main(){
