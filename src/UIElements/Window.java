@@ -1,68 +1,154 @@
 package UIElements;
 
 import Core.Main;
+import Core.Settings;
 import Core.Utilities;
 import TeamMember.Team;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.Format;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 //import java.awt.event.ActionListener;
 
 
 public class Window {
-    private Team[] teams; // TODO change this
-    private Main main;
     JFrame frame = new JFrame("FTCStats");
     private static final int HEIGHT = 700, WIDTH = HEIGHT*16/9;
-    JButton spreadsheetButton;
-    Dimension spButtonSize = new Dimension(200, 50);
-    JButton submitButton;
-    Dimension subButtonSize = new Dimension(80, 40);
-    JComboBox typeSelector;
-    Dimension textBoxSize = new Dimension(80, 30);
-    JComboBox[] selectionBoxes = {
-            new JComboBox(new String[] {"--select--","Bredan", "Erin", "Luca"}),
-            new JComboBox(new String[] {"--select--", "Mason", "Zoe", "Cyrus"}),
-            new JComboBox(new String[] {"--select--", "Caleb", "Matt", "Zach"})
-    };
-    Dimension selBoxSize = new Dimension(100, 30);
-    JTextField[] scoreFields = {
-            new JTextField(),
-            new JTextField(),
-            new JTextField(),
-            new JTextField()
-    };
+    private Team[] teams; // TODO change this
+    private Main main;
+    private JPanel activeScreen;
 
-    public void update(){
-        spreadsheetButton.setSize((int) (spButtonSize.getWidth()/WIDTH*frame.getWidth()), (int) (spButtonSize.getHeight()/HEIGHT*frame.getHeight()));
-        spreadsheetButton.setLocation(frame.getSize().width/2 - spreadsheetButton.getWidth()/2, 500*frame.getHeight()/HEIGHT);
+    /* MAIN SCREEN */
+    private JPanel mainScreen;
+    private ArrayList<JComponent> msComponents;
+    private ArrayList<Dimension> msDimensions;
+    private ArrayList<Point> msLocations;
+    private void mainScreenSetup(){
+        mainScreen = new JPanel();
+        mainScreen.setLayout(null);
 
-        submitButton.setSize((int) (subButtonSize.getWidth()/WIDTH*frame.getWidth()), (int) (subButtonSize.getHeight()/HEIGHT*frame.getHeight()));
-        submitButton.setLocation(frame.getSize().width/2 - submitButton.getWidth()/2, 200*frame.getHeight()/HEIGHT);
+        /* SPREADSHEET BUTTON */
+        JButton spreadsheetButton = new JButton("Launch Spreadsheet");
+        //spreadsheetButton.addActionListener(new DriversListListener() {public void actionPerformed(ActionEvent e) {main.saveAndLaunch();}}); TODO
+        spreadsheetButton.setSize(new Dimension((int) (200*windowRatio().getWidth()), (int) (50*windowRatio().getHeight())));
+        spreadsheetButton.setLocation(frame.getSize().width/2 - spreadsheetButton.getWidth()/2, (int) (500*windowRatio().getHeight()));
 
-        typeSelector.setSize((int) (selBoxSize.getWidth()/WIDTH*frame.getWidth()), (int) (selBoxSize.getHeight()/HEIGHT*frame.getHeight()));
-        typeSelector.setLocation(125*frame.getWidth()/WIDTH,100*frame.getHeight()/HEIGHT);
+        /* SUBMIT BUTTON */
+        JButton submitButton = new JButton("Submit");
+        //submitButton.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent e) {createEntry();}}); TODO
+        submitButton.setSize(new Dimension((int) (80*windowRatio().getWidth()), (int) (40*windowRatio().getHeight())));
+        submitButton.setLocation(frame.getSize().width/2 - submitButton.getWidth()/2, (int) (200*windowRatio().getHeight()));
 
-        selectionBoxes[0].setSize(typeSelector.getSize());
-        selectionBoxes[0].setLocation(typeSelector.getX()+125*frame.getWidth()/WIDTH, typeSelector.getY());
-        for(int i = 1; i < selectionBoxes.length; i++){
+        /* TYPE SELECTOR */
+        JComboBox typeSelector = new JComboBox(new String[] {"--select--", "Practice", "Competition"});
+        typeSelector.setSelectedIndex(0);
+        //typeSelector.addActionListener(new TypeListener()); TODO
+        typeSelector.setSize((int) (100*windowRatio().getWidth()), (int) (30*windowRatio().getHeight()));
+        typeSelector.setLocation((int) (125*windowRatio().getWidth()),(int) (100*windowRatio().getHeight()));
+        typeSelector.setName("Type");
+
+        /* DRIVER SELECTORS */
+        JComboBox[] selectionBoxes = {
+                new JComboBox(new String[] {"--select--","Bredan", "Erin", "Luca"}),
+                new JComboBox(new String[] {"--select--", "Mason", "Zoe", "Cyrus"}),
+                new JComboBox(new String[] {"--select--", "Caleb", "Matt", "Zach"})
+        };
+
+        selectionBoxes[0].setLocation(typeSelector.getLocation().x+typeSelector.getWidth()+((int)(25*windowRatio().getWidth())),
+                typeSelector.getLocation().y);
+
+        for(int i = 0; i < selectionBoxes.length; i++){
+            selectionBoxes[i].setSelectedIndex(0);
+            //selectionBoxes[i].addActionListener(new DriversListListener()); TODO
             selectionBoxes[i].setSize(typeSelector.getSize());
-            selectionBoxes[i].setLocation(selectionBoxes[i-1].getX()+125*frame.getWidth()/WIDTH, selectionBoxes[i-1].getY());
+            if(i>0) selectionBoxes[i].setLocation((selectionBoxes[i-1].getLocation().x+selectionBoxes[i-1].getWidth()+((int)(25*windowRatio().getWidth()))), typeSelector.getLocation().y);
         }
+        selectionBoxes[0].setName("Drivers");
+        selectionBoxes[1].setName("Operators");
+        selectionBoxes[2].setName("Coaches");
 
-        scoreFields[0].setSize((int) (textBoxSize.getWidth()/WIDTH*frame.getWidth()), (int) (textBoxSize.getHeight()/HEIGHT*frame.getHeight()));
-        scoreFields[0].setLocation(selectionBoxes[selectionBoxes.length-1].getX()+125*frame.getWidth()/WIDTH, typeSelector.getY());
-        for(int i = 1; i < scoreFields.length; i++){
-            scoreFields[i].setSize(scoreFields[0].getSize());
-            scoreFields[i].setLocation(scoreFields[i-1].getX()+125*frame.getWidth()/WIDTH, typeSelector.getY());
+        /* SCORE FIELDS */
+        JTextField[] scoreFields = {
+                new JTextField(),
+                new JTextField(),
+                new JTextField(),
+                new JTextField()
+        };
+        scoreFields[0].setSize((int) (80*windowRatio().getWidth()), (int) (30*windowRatio().getWidth()));
+        scoreFields[0].setLocation(selectionBoxes[selectionBoxes.length-1].getLocation().x+selectionBoxes[selectionBoxes.length-1].getWidth()+((int) (25*windowRatio().getWidth())), (int)(100*windowRatio().getHeight()));
+        for(int i = 0; i < scoreFields.length; i++){
+            scoreFields[i].setColumns(6);
+            //f.addFocusListener(); TODO
+            //f.addActionListener(); TODO
+            if(i>0) {
+                scoreFields[i].setSize(scoreFields[0].getSize());
+                scoreFields[i].setLocation(scoreFields[i - 1].getLocation().x + scoreFields[i - 1].getWidth() + ((int) (25 * windowRatio().getWidth())), scoreFields[0].getY());
+            }
         }
+        scoreFields[0].setName("Total");
+        scoreFields[1].setName("Teleop");
+        scoreFields[2].setName("Auton");
+        scoreFields[3].setName("Penalties");
+
+        msComponents = new ArrayList<JComponent>();
+        msComponents.add(spreadsheetButton);
+        msComponents.add(submitButton);
+        msComponents.add(typeSelector);
+        Collections.addAll(msComponents, selectionBoxes);
+        Collections.addAll(msComponents, scoreFields);
+
+        msDimensions = new ArrayList<Dimension>();
+        msLocations = new ArrayList<Point>();
+        for(JComponent c : msComponents){
+            msDimensions.add(c.getSize());
+            msLocations.add(c.getLocation());
+            mainScreen.add(c);
+        }
+        frame.add(mainScreen, BorderLayout.CENTER);
     }
 
+    /* SETTINGS SCREEN */
+    private JPanel settingsScreen;
+    private ArrayList<JComponent> ssComponents;
+    private ArrayList<Dimension> ssDimensions;
+    private ArrayList<Point> ssLocations;
+    private void settingsScreenSetup(){
+        settingsScreen = new JPanel();
+        settingsScreen.setLayout(null);
+        ssComponents = new ArrayList<JComponent>();
+        ssDimensions = new ArrayList<Dimension>();
+        ssLocations = new ArrayList<Point>();
+
+        JLabel dateWeightLabel = new JLabel(String.valueOf(Settings.dateWeight));
+        dateWeightLabel.setLocation(200, 200);
+        dateWeightLabel.setSize(100, 20);
+
+        JTextField dateWeightInput = new JTextField();
+        dateWeightInput.setLocation(frame.getWidth()/2, frame.getHeight()/2);
+        dateWeightLabel.setSize(100, 100);
+        dateWeightInput.setColumns(12);
+        dateWeightInput.setVisible(true);
+
+        ssComponents.add(dateWeightLabel);
+        ssComponents.add(dateWeightInput);
+
+        for(JComponent c : ssComponents){
+            ssDimensions.add(c.getSize());
+            ssLocations.add(c.getLocation());
+            settingsScreen.add(c);
+        }
+        frame.add(settingsScreen, BorderLayout.CENTER);
+    }
+
+    public void update(){
+        //if(activeScreen.equals(mainScreen)){
+            //updateComponents(msComponents, msDimensions, msLocations);
+        //}else if(activeScreen.equals(settingsScreen)){
+            updateComponents(ssComponents, ssDimensions, ssLocations);
+        //}
+    }
 
     public Window(Main main, Team... teams){
         this.main = main;
@@ -71,72 +157,24 @@ public class Window {
         frame.setSize(WIDTH, HEIGHT);
         frame.setLocationRelativeTo(null);
 
-        //JLabel label = new JLabel("Some info");
-        spreadsheetButton = new JButton("Launch Spreadsheet");
-        JPanel panel = new JPanel();
-        panel.setLayout(null);
-
-        spreadsheetButton.addActionListener(new DriversListListener() {
-            public void actionPerformed(ActionEvent e) {
-                main.saveAndLaunch();
-            }
-        });
-        spreadsheetButton.setSize(spButtonSize);
-        spreadsheetButton.setLocation(frame.getSize().width/2 - spreadsheetButton.getWidth()/2, 500);
-
-        int listX = 125, listY = 100;
-
-        typeSelector = new JComboBox(new String[] {"--select--", "Practice", "Competition"});
-        typeSelector.setSelectedIndex(0);
-        typeSelector.addActionListener(new TypeListener());
-        typeSelector.setSize(selBoxSize);
-        typeSelector.setLocation(listX,listY);
-        typeSelector.setName("Type");
-        panel.add(typeSelector);
-
-        for(JComboBox b : selectionBoxes){
-            b.setSelectedIndex(0);
-            b.addActionListener(new DriversListListener());
-            b.setSize(selBoxSize);
-            b.setLocation(listX+=150, listY);
-            panel.add(b);
-        }
-        selectionBoxes[0].setName("Drivers");
-        selectionBoxes[1].setName("Operators");
-        selectionBoxes[2].setName("Coaches");
-
-        listX+=25;
-
-        for(JTextField f : scoreFields){
-            f.setColumns(6);
-            f.setSize(textBoxSize);
-            f.setLocation(listX+=100, listY);
-            f.addFocusListener(new TextListener());
-            f.addActionListener(new TextListener());
-            panel.add(f);
-        }
-        scoreFields[0].setName("Total");
-        scoreFields[1].setName("Teleop");
-        scoreFields[2].setName("Auto");
-        scoreFields[3].setName("Penalties");
-
-        submitButton = new JButton("Submit");
-        submitButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                createEntry();
-            }
-        });
-        submitButton.setSize(subButtonSize);
-        submitButton.setLocation(frame.getSize().width/2 - submitButton.getWidth()/2, 200);
-
-        panel.add(spreadsheetButton);
-        panel.add(submitButton);
-
-        //frame.add(label, BorderLayout.NORTH);
-        frame.add(panel, BorderLayout.CENTER);
-
+        mainScreenSetup();
+        settingsScreenSetup();
+        setActiveScreen(settingsScreen);
         frame.setVisible(true);
+        mainScreen.setVisible(false);
+        settingsScreen.setVisible(true);
     }
+
+
+    public void setActiveScreen(JPanel panel){
+        activeScreen = panel;
+        //settingsScreen.setVisible(false);
+        //mainScreen.setVisible(false);
+
+        //panel.setVisible(true);
+    }
+
+
 
     public void createEntry(){
         char type = TypeListener.getType();
@@ -146,5 +184,16 @@ public class Window {
         //TODO change this
         XSSFWorkbook wb = teams[0].getWorkbook();
         Utilities.writeEntry(wb, "Match Data", type, names, scores);
+    }
+
+    public FloatingDimension windowRatio(){
+        return new FloatingDimension((double) frame.getWidth()/WIDTH, (double) frame.getHeight()/HEIGHT);
+    }
+
+    private void updateComponents(ArrayList<JComponent> components, ArrayList<Dimension> dimensions, ArrayList<Point> locations){
+        for(int i = 0; i < components.size(); i++){
+            components.get(i).setSize((int) (dimensions.get(i).getWidth()*windowRatio().getWidth()), (int) (dimensions.get(i).getHeight()*windowRatio().getHeight()));
+            components.get(i).setLocation((int) (locations.get(i).x*windowRatio().getWidth()), (int) (locations.get(i).y*windowRatio().getHeight()));
+        }
     }
 }
