@@ -2,6 +2,7 @@ package Core;
 
 import Match.Match;
 import TeamMember.*;
+import UIElements.TesterWindow;
 import UIElements.Window;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -21,11 +22,13 @@ import java.util.*;
 public class Main {
 
     private Window window;
+    private TesterWindow testerWindow;
     private Team redTeam;
 
     private void runSetup(){
         XSSFWorkbook redTeamWorkbook = Utilities.getWorkbookFromFile(Settings.redTeamDataFile);
-        window = new Window(this, redTeam);
+        //window = new Window(this, redTeam);
+        testerWindow = new TesterWindow(this, redTeam);
 
         redTeam = new Team(redTeamWorkbook,
                             new Driver[] {new Driver("Bredan"), new Driver("Erin"), new Driver("Luca")},
@@ -40,7 +43,8 @@ public class Main {
     }
     private void run(){
         while(true){
-            window.update();
+            //window.update();
+            testerWindow.update();
         }
     }
 

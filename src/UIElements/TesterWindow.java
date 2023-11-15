@@ -28,6 +28,7 @@ public class TesterWindow {
     private JPanel mainScreen;
     private ArrayList<JComponent> msComponents;
     private ArrayList<Dimension> msDimensions;
+    private ArrayList<Point> msLocations;
     private void mainScreenSetup(){
         mainScreen = new JPanel();
         mainScreen.setLayout(null);
@@ -58,13 +59,15 @@ public class TesterWindow {
                 new JComboBox(new String[] {"--select--", "Mason", "Zoe", "Cyrus"}),
                 new JComboBox(new String[] {"--select--", "Caleb", "Matt", "Zach"})
         };
+
+        selectionBoxes[0].setLocation(typeSelector.getLocation().x+typeSelector.getWidth()+((int)(25*windowRatio().getWidth())),
+                typeSelector.getLocation().y);
+
         for(int i = 0; i < selectionBoxes.length; i++){
             selectionBoxes[i].setSelectedIndex(0);
             //selectionBoxes[i].addActionListener(new DriversListListener()); TODO
             selectionBoxes[i].setSize(typeSelector.getSize());
-            selectionBoxes[i].setLocation(i==0 ? (typeSelector.getLocation().x+typeSelector.getWidth()+((int)(25*windowRatio().getWidth()))) :
-                            (selectionBoxes[i].getLocation().x+selectionBoxes[i-1].getWidth()+((int)(25*windowRatio().getWidth()))),
-                    (int)(100*windowRatio().getHeight()));
+            if(i>0) selectionBoxes[i].setLocation((selectionBoxes[i-1].getLocation().x+selectionBoxes[i-1].getWidth()+((int)(25*windowRatio().getWidth()))), typeSelector.getLocation().y);
         }
         selectionBoxes[0].setName("Drivers");
         selectionBoxes[1].setName("Operators");
@@ -101,8 +104,10 @@ public class TesterWindow {
         Collections.addAll(msComponents, scoreFields);
 
         msDimensions = new ArrayList<Dimension>();
+        msLocations = new ArrayList<Point>();
         for(JComponent c : msComponents){
             msDimensions.add(c.getSize());
+            msLocations.add(c.getLocation());
         }
         for(JComponent c : msComponents){
             mainScreen.add(c);
@@ -113,6 +118,7 @@ public class TesterWindow {
     private void updateMainScreen(){
         for(int i = 0; i < msComponents.size(); i++){
             msComponents.get(i).setSize((int) (msDimensions.get(i).getWidth()*windowRatio().getWidth()), (int) (msDimensions.get(i).getHeight()*windowRatio().getHeight()));
+            msComponents.get(i).setLocation((int) (msLocations.get(i).x*windowRatio().getWidth()), (int) (msLocations.get(i).y*windowRatio().getHeight()));
         }
     }
 
@@ -133,39 +139,12 @@ public class TesterWindow {
     }
 
     public void update(){
-        if(activeScreen.equals(mainScreen)){
+        //if(activeScreen.equals(mainScreen)){
             updateMainScreen();
-        }else if(activeScreen.equals(settingsScreen)){
+        //}else if(activeScreen.equals(settingsScreen)){
 
-        }
+        //}
     }
-
-/*
-    public void update(){
-        spreadsheetButton.setSize((int) (spButtonSize.getWidth()/WIDTH*frame.getWidth()), (int) (spButtonSize.getHeight()/HEIGHT*frame.getHeight()));
-        spreadsheetButton.setLocation(frame.getSize().width/2 - spreadsheetButton.getWidth()/2, 500*frame.getHeight()/HEIGHT);
-
-        submitButton.setSize((int) (subButtonSize.getWidth()/WIDTH*frame.getWidth()), (int) (subButtonSize.getHeight()/HEIGHT*frame.getHeight()));
-        submitButton.setLocation(frame.getSize().width/2 - submitButton.getWidth()/2, 200*frame.getHeight()/HEIGHT);
-
-        typeSelector.setSize((int) (selBoxSize.getWidth()/WIDTH*frame.getWidth()), (int) (selBoxSize.getHeight()/HEIGHT*frame.getHeight()));
-        typeSelector.setLocation(125*frame.getWidth()/WIDTH,100*frame.getHeight()/HEIGHT);
-
-        selectionBoxes[0].setSize(typeSelector.getSize());
-        selectionBoxes[0].setLocation(typeSelector.getX()+125*frame.getWidth()/WIDTH, typeSelector.getY());
-        for(int i = 1; i < selectionBoxes.length; i++){
-            selectionBoxes[i].setSize(typeSelector.getSize());
-            selectionBoxes[i].setLocation(selectionBoxes[i-1].getX()+125*frame.getWidth()/WIDTH, selectionBoxes[i-1].getY());
-        }
-
-        scoreFields[0].setSize((int) (textBoxSize.getWidth()/WIDTH*frame.getWidth()), (int) (textBoxSize.getHeight()/HEIGHT*frame.getHeight()));
-        scoreFields[0].setLocation(selectionBoxes[selectionBoxes.length-1].getX()+125*frame.getWidth()/WIDTH, typeSelector.getY());
-        for(int i = 1; i < scoreFields.length; i++){
-            scoreFields[i].setSize(scoreFields[0].getSize());
-            scoreFields[i].setLocation(scoreFields[i-1].getX()+125*frame.getWidth()/WIDTH, typeSelector.getY());
-        }
-    }
-*/
 
     public TesterWindow(Main main, Team... teams){
         this.main = main;
@@ -175,10 +154,11 @@ public class TesterWindow {
         frame.setLocationRelativeTo(null);
 
         mainScreenSetup();
-        setActiveScreen(mainScreen);
+        //setActiveScreen(mainScreen);
         frame.setVisible(true);
+        mainScreen.setVisible(true);
     }
-
+/*
     public void setActiveScreen(JPanel panel){
         activeScreen = panel;
         //settingsScreen.setVisible(false);
@@ -186,6 +166,8 @@ public class TesterWindow {
 
         panel.setVisible(true);
     }
+
+ */
 
     public void createEntry(){
         char type = TypeListener.getType();
@@ -197,7 +179,7 @@ public class TesterWindow {
         Utilities.writeEntry(wb, "Match Data", type, names, scores);
     }
 
-    public Dimension windowRatio(){
-        return new Dimension(frame.getWidth()/WIDTH, frame.getHeight()/HEIGHT);
+    public FloatingDimension windowRatio(){
+        return new FloatingDimension((double) frame.getWidth()/WIDTH, (double) frame.getHeight()/HEIGHT);
     }
 }
