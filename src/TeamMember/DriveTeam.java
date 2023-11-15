@@ -19,6 +19,9 @@ public class DriveTeam {
     // Total, teleop, auton, penalties
     private double[] weightedAverages = new double[4];
 
+    private double[] duoSums = new double[4];
+    private double[] nonZeroDuos = new double[4];
+
     /**
      * Get the Averages of Total, Teleop, Auton, Penalties, and weighted averages in that order
      * Used to write the information to the workbook
@@ -37,13 +40,84 @@ public class DriveTeam {
 
     public void calcAll(){
         calcBasicAverages();
-        for(int i = 0; i < weightedAverages.length; i++){
-            weightedAverages[i] = 0;
-        }
-        //if(matchHistory != null) calcWeightedAverages();
-        //else System.out.println("False");
+
+        if(matchHistory != null) calcWeightedAverages();
+        else System.out.println("False");
 
         //System.out.println(toStringWeighted());
+    }
+    private void getDuoScores(AvgMatchGetter ag, int i){
+        double scores = 0;
+        double nonZeros = 0;
+
+        for(Match m : matchHistory){
+            double s = ag.get(m)[i];
+            scores += (s>=0?s:0);
+            nonZeros += (s>=0?1:0);
+        }
+        duoSums[i] = scores;
+        nonZeroDuos[i] = nonZeros;
+    }
+
+    public void calcWeightedAverages(){
+        for(int i = 0; i < weightedAverages.length; i++){
+            weightedAverages[i] = calcWeightedAverage(TeamMember::getDividends, TeamMember::getDivisors, i);
+        }
+    }
+    public double calcWeightedAverage(AvgGetter dividendGetter, AvgGetter divisorGetter, int i){
+        double duoSum = 0;
+        double validDuos = 0;
+        double trioSum = 0;
+        double validTrios = 0;
+
+        for(Match m : matchHistory){
+            double s = m.getScores()[i];
+
+            if(s >= 0){
+                if(m.getCoach().equals(this.coach)){
+                    trioSum += s;
+                    validTrios++;
+                }
+                else{
+                    duoSum += s;
+                    validDuos++;
+                }
+            }
+        }
+
+        double driverSolo = driver.getDividends()[i] - duoSum - trioSum;
+        double driverSoloMatches = driver.getDivisors()[i] - validDuos - validTrios;
+
+        double operatorSolo = operator.getDividends()[i] - duoSum - trioSum;
+        double operatorSoloMatches = operator.getDivisors()[i] - validDuos - validTrios;
+
+        double coachSolo = coach.getDividends()[i] - trioSum;
+        double coachSoloMatches = coach.getDivisors()[i] - validTrios;
+
+        /*
+        System.out.println("Driver Solo: " + driverSolo + "  " + driverSoloMatches);
+        System.out.println("Operator Solo: " + operatorSolo + "  " + operatorSoloMatches);
+        System.out.println("Coach Solo: " + coachSolo + "  " + coachSoloMatches);
+        System.out.println("Duo: " + duoSum + "  " + validDuos);
+        System.out.println("Trio: " + trioSum + "  " + validTrios);
+        System.out.println("\n");
+
+         */
+
+        double avgOfSolos = (driverSolo*1.0 + operatorSolo*1.0 + coachSolo*0.5) / (driverSoloMatches*1.0 + operatorSoloMatches*1.0 + coachSoloMatches*0.5);
+        double avgOfDuos = (duoSum * 2.0) / (validDuos * 2.0);
+        double avgOfTrios = (trioSum*3.0) / (validTrios*3.0);
+        avgOfSolos = Double.isNaN(avgOfSolos) ? 0 : avgOfSolos;
+        avgOfDuos = Double.isNaN(avgOfDuos) ? 0 : avgOfDuos;
+        avgOfTrios = Double.isNaN(avgOfTrios) ? 0 : avgOfTrios;
+
+        //System.out.println("Avg of Solos: " + avgOfSolos + "  Avg of Duos: " + avgOfDuos + "  Avg of Trios: " + avgOfTrios + "\n\n");
+
+        double totalAverage = (avgOfSolos*1.0 + avgOfDuos*2.0 + avgOfTrios*3.0) / (6.0 - (avgOfSolos==0 ? 1 : 0) - (avgOfDuos==0 ? 2 : 0) - (avgOfTrios==0 ? 3 : 0));
+        totalAverage = Double.isNaN(totalAverage) ? 0 : totalAverage;
+
+        //System.out.println(duoSum + "  " + validDuos + "  " + trioSum + "  " + validTrios);
+        return totalAverage;
     }
 
     /**
@@ -251,6 +325,11 @@ public class DriveTeam {
         this.driver = d;
         this.operator = o;
         this.coach = c;
+
+        for(int i = 0; i < averages.length; i++){
+            averages[i] = -1;
+            //weightedAverages[i] = -1; TODO
+        }
     }
     public DriveTeam(Driver d, Operator o, Coach c, ArrayList<Match> matches){this(d.getName()+"+"+o.getName(),d,o,c,matches);}
 
@@ -271,5 +350,8 @@ public class DriveTeam {
 
     private interface AvgGetter{
         double[] get(TeamMember t);
+    }
+    private interface AvgMatchGetter{
+        int[] get(Match m);
     }
 }

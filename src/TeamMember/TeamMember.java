@@ -19,6 +19,9 @@ public abstract class TeamMember {
 
     private double[] weightedAverages = new double[4];
 
+    private double[] dividends = new double[4];
+    private double[] divisors = new double[4];
+
     public ArrayList<Double> getGroupedData(){
         ArrayList<Double> a = new ArrayList<Double>();
         for(Double d : averages){
@@ -33,6 +36,11 @@ public abstract class TeamMember {
     public TeamMember(String name, Type type){
         this.type = type;
         this.name = name;
+
+        for(int i = 0; i < averages.length; i++){
+            averages[i] = -1;
+            weightedAverages[i] = -1;
+        }
 
         matches = new ArrayList<Match>();
     }
@@ -64,12 +72,11 @@ public abstract class TeamMember {
                 n += (1-weight*daysAgo);
             }
         }
-        /*
-        if(weight==0){
-            totalSum = sum;
-            validTotals = n;
+        if(weight == 0) {
+            divisors[i] = n;
+            dividends[i] = sum;
         }
-         */
+
         return (n==0?0:sum/n);
     }
 
@@ -98,5 +105,12 @@ public abstract class TeamMember {
     }
     private interface AvgGetter{
         int[] get(Match m);
+    }
+
+    public double[] getDividends(){
+        return dividends;
+    }
+    public double[] getDivisors(){
+        return divisors;
     }
 }
