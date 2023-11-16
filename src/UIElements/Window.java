@@ -144,9 +144,9 @@ public class Window {
 
     public void update(){
         //if(activeScreen.equals(mainScreen)){
-            //updateComponents(msComponents, msDimensions, msLocations);
+            updateComponents(msComponents, msDimensions, msLocations);
         //}else if(activeScreen.equals(settingsScreen)){
-            updateComponents(ssComponents, ssDimensions, ssLocations);
+            //updateComponents(ssComponents, ssDimensions, ssLocations);
         //}
     }
 
@@ -159,10 +159,10 @@ public class Window {
 
         mainScreenSetup();
         settingsScreenSetup();
-        setActiveScreen(settingsScreen);
+        setActiveScreen(mainScreen);
         frame.setVisible(true);
-        mainScreen.setVisible(false);
-        settingsScreen.setVisible(true);
+        mainScreen.setVisible(true);
+        settingsScreen.setVisible(false);
     }
 
 
