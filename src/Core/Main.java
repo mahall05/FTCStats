@@ -31,7 +31,7 @@ public class Main {
                             new Driver[] {new Driver("Bredan"), new Driver("Erin"), new Driver("Luca")},
                             new Operator[] {new Operator("Mason"), new Operator("Zoe"), new Operator("Cyrus")},
                             new Coach[] {new Coach("Caleb"), new Coach("Matt"), new Coach("Zach")},
-                            new String[][] {{"Bredan","Mason","Caleb"},{"Erin","Zoe","Matt"},{"Luca","Cyrus","Zach"}});
+                            new String[][] {{"Bredan","Mason"},{"Erin","Zoe"},{"Luca","Cyrus"}});
     }
 
     private void start() {

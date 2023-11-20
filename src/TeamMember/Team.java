@@ -56,7 +56,7 @@ public class Team {
 
         DriveTeam[] driveTeams = new DriveTeam[dtNames.length];
         for(int i = 0; i < driveTeams.length; i++){
-            driveTeams[i] = new DriveTeam((Driver) Utilities.findByName(drivers,dtNames[i][0]), (Operator) Utilities.findByName(operators,dtNames[i][1]), (Coach) Utilities.findByName(coaches, dtNames[i][2]), matches);
+            driveTeams[i] = new DriveTeam((Driver) Utilities.findByName(drivers,dtNames[i][0]), (Operator) Utilities.findByName(operators,dtNames[i][1]), coaches, matches);
         }
         this.driveTeams = driveTeams;
         runCalculations();
