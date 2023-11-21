@@ -9,9 +9,9 @@ public class Settings {
     /* Match Settings */
 
     /* The relative weight of practice matches when compared to real competition matches */
-    public static double relativePracticeWeight = 1;
+    public static double relativePracticeWeight = 0.25;
     /* The relative weight of matches with the old robot when compared to the new robot */
-    public static double relativeOldRobotWeight = 1;
+    public static double relativeOldRobotWeight = 0.25;
 
     /* Team Member Settings */
     public static double dateWeight = 0.0294117647;

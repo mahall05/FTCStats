@@ -109,9 +109,13 @@ public class Team {
 
         int row = 0;
         for(DriveTeam dt : driveTeams){
-            dataMap.put(row++, dt.getGroupedData());
+            dataMap.put(row++, dt.getGroupedTheoreticalData());
         }
-        Utilities.writeDatamapToSheet(2, Utilities.getSheetFromWorkbook(workbook, "Drive Team Data"), dataMap);
+        row+=3;
+        for(DriveTeam dt : driveTeams){
+            dataMap.put(row++, dt.getGroupedExperimentalData());
+        }
+        Utilities.writeDatamapToSheet(3, Utilities.getSheetFromWorkbook(workbook, "Drive Team Data"), dataMap);
     }
 
     public void saveWorkbook(){

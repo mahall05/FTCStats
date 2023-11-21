@@ -12,6 +12,18 @@ public class DriveTeam {
     private ArrayList<Match> matchHistory;
     private String name;
 
+    /* THEORETICAL AVERAGES */
+    private double[] tDuoAverages = new double[4];
+    private double[] tDuoStdDevs = new double[4];
+    private double[] tDuoSampleSizes = new double[4];
+    private double[] getDuoUnweightedSampleSizes = new double[4];
+
+    private double[][] tCoachIncludedAverages = new double[3][4];
+    private double[][] tCoachIncludedStdDevs = new double[3][4];
+    private double[][] tCoachIncludedSampleSizes = new double[3][4];
+    private double[][] getCoachIncludedUnweightedSampleSizes = new double[3][4];
+
+    /* EXPERIMENTAL AVERAGES */
     private double[] duoAverages = new double[4];
     private double[] duoStdDevs = new double[4];
     private double[] duoSampleSizes = new double[4];
@@ -22,12 +34,26 @@ public class DriveTeam {
     private double[][] coachIncludedSampleSizes = new double[3][4];
     private double[][] coachIncludedUnweightedSampleSizes = new double[3][4];
 
+    public ArrayList<Double> getGroupedTheoreticalData(){
+        ArrayList<Double> a = new ArrayList<Double>();
+
+        for(int i = 0; i < tDuoAverages.length; i++){
+            a.add(tDuoAverages[i]);
+        }
+        for(int i = 0; i < tCoachIncludedAverages.length; i++){
+            for(int j = 0; j < tCoachIncludedAverages[i].length; j++) {
+                a.add(tCoachIncludedAverages[i][j]);
+            }
+        }
+
+        return a;
+    }
     /**
      * Get the Averages of Total, Teleop, Auton, Penalties, and weighted averages in that order
      * Used to write the information to the workbook
      * @return An ArrayList containing data associated with the drive team.
      */
-    public ArrayList<Double> getGroupedData(){
+    public ArrayList<Double> getGroupedExperimentalData(){
         ArrayList<Double> a = new ArrayList<Double>();
 
         for(int i = 0; i < duoAverages.length; i++){
@@ -53,9 +79,11 @@ public class DriveTeam {
             for (int i = 0; i < duoAverages.length; i++) {
                 //weightedAverages[i] = calcWeightedAverage(TeamMember::getDividends, TeamMember::getDivisors, i);
                 calcDuoOnlyData(i);
+                calcDuoOnlyTheoreticalData(i);
             }
-            for(int i = 0; i < coachIncludedAverages.length; i++){
+            for(int i = 0; i < coachIncludedAverages[0].length; i++){
                 calcPerCoachData(i);
+                calcPerCoachTheoreticalData(i);
             }
         }
         else System.out.println("False");
@@ -104,7 +132,6 @@ public class DriveTeam {
         duoSampleSizes[i] = validDeviations;
         duoUnweightedSampleSizes[i] = sampleSize;
     }
-
     public void calcPerCoachData(int i){
         double[] coachSums = new double[3];
         double[] coachValids = new double[3];
@@ -124,6 +151,17 @@ public class DriveTeam {
 
         for(int j = 0; j < coaches.length; j++){
             coachIncludedAverages[j][i] = coachSums[j]/coachValids[j];
+        }
+    }
+
+    public void calcDuoOnlyTheoreticalData(int i){
+        double sums = (driver.getAverages()[i]*1 + operator.getAverages()[i]*1);
+        tDuoAverages[i] = sums/2;
+    }
+    public void calcPerCoachTheoreticalData(int i){
+        for(int j = 0; j < tCoachIncludedAverages.length; j++){
+            double sums = (driver.getAverages()[i]*1 + operator.getAverages()[i]*1 + coaches[j].getAverages()[i]*0.5);
+            tCoachIncludedAverages[j][i] = sums/2.5;
         }
     }
 
@@ -154,11 +192,21 @@ public class DriveTeam {
             duoSampleSizes[i] = -1;
             duoUnweightedSampleSizes[i] = -1;
 
+            tDuoAverages[i] = -1;
+            tDuoStdDevs[i] = -1;
+            tDuoSampleSizes[i] = -1;
+            getDuoUnweightedSampleSizes[i] = -1;
+
             for(int j = 0; j < coachIncludedAverages.length; j++){
                 coachIncludedAverages[j][i] = -1;
                 coachIncludedStdDevs[j][i] = -1;
                 coachIncludedSampleSizes[j][i] = -1;
                 coachIncludedUnweightedSampleSizes[j][i] = -1;
+
+                tCoachIncludedAverages[j][i] = -1;
+                tCoachIncludedStdDevs[j][i] = -1;
+                tCoachIncludedSampleSizes[j][i] = -1;
+                getCoachIncludedUnweightedSampleSizes[j][i] = -1;
             }
         }
     }
