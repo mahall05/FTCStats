@@ -1,150 +1,85 @@
 package UIElements;
 
-import Core.Main;
-import Core.Utilities;
-import TeamMember.Team;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import Core.Settings;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.Format;
-import java.time.LocalDate;
-//import java.awt.event.ActionListener;
-
 
 public class Window {
-    private Team[] teams; // TODO change this
-    private Main main;
-    JFrame frame = new JFrame("FTCStats");
-    private static final int HEIGHT = 700, WIDTH = HEIGHT*16/9;
-    JButton spreadsheetButton;
-    Dimension spButtonSize = new Dimension(200, 50);
-    JButton submitButton;
-    Dimension subButtonSize = new Dimension(80, 40);
-    JComboBox typeSelector;
-    Dimension textBoxSize = new Dimension(80, 30);
-    JComboBox[] selectionBoxes = {
-            new JComboBox(new String[] {"--select--","Bredan", "Erin", "Luca"}),
-            new JComboBox(new String[] {"--select--", "Mason", "Zoe", "Cyrus"}),
-            new JComboBox(new String[] {"--select--", "Caleb", "Matt", "Zach"})
-    };
-    Dimension selBoxSize = new Dimension(100, 30);
-    JTextField[] scoreFields = {
-            new JTextField(),
-            new JTextField(),
-            new JTextField(),
-            new JTextField()
-    };
+    final static String INPUTPANEL = "Match Input";
+    final static String SETTINGSPANEL = "Settings";
+    final static int extraWindowWidth = 100;
+    final static int extraWindowHeight = 300;
 
-    public void update(){
-        spreadsheetButton.setSize((int) (spButtonSize.getWidth()/WIDTH*frame.getWidth()), (int) (spButtonSize.getHeight()/HEIGHT*frame.getHeight()));
-        spreadsheetButton.setLocation(frame.getSize().width/2 - spreadsheetButton.getWidth()/2, 500*frame.getHeight()/HEIGHT);
+    public void addComponentToPane(Container pane) {
+        JTabbedPane tabbedPane = new JTabbedPane();
 
-        submitButton.setSize((int) (subButtonSize.getWidth()/WIDTH*frame.getWidth()), (int) (subButtonSize.getHeight()/HEIGHT*frame.getHeight()));
-        submitButton.setLocation(frame.getSize().width/2 - submitButton.getWidth()/2, 200*frame.getHeight()/HEIGHT);
+        //Create the "cards".
+        JPanel card1 = new JPanel() {
+            //Make the panel wider than it really needs, so
+            //the window's wide enough for the tabs to stay
+            //in one row.
+            public Dimension getPreferredSize() {
+                Dimension size = super.getPreferredSize();
+                size.width += extraWindowWidth;
+                size.height += extraWindowHeight;
+                return size;
+            }
+        };
+        JComboBox ts = new JComboBox(new String[] {"--select--", "Practice", "Competition"});
+        JComboBox d = new JComboBox(new String[] {"--select--", "Braden", "Erin", "Luca"});
+        JComboBox o = new JComboBox(new String[] {"--select--", "Mason", "Zoe", "Cyrus"});
+        JComboBox c = new JComboBox(new String[] {"--select--", "Caleb", "Matt", "Zach"});
+        JTextField to = new JTextField();
+        JTextField te = new JTextField();
+        JTextField au = new JTextField();
+        JTextField pe = new JTextField();
+        to.setColumns(6);
+        te.setColumns(6);
+        au.setColumns(6);
+        pe.setColumns(6);
+        card1.add(ts);
+        card1.add(d);
+        card1.add(o);
+        card1.add(c);
+        card1.add(to);
+        card1.add(te);
+        card1.add(au);
+        card1.add(pe);
 
-        typeSelector.setSize((int) (selBoxSize.getWidth()/WIDTH*frame.getWidth()), (int) (selBoxSize.getHeight()/HEIGHT*frame.getHeight()));
-        typeSelector.setLocation(125*frame.getWidth()/WIDTH,100*frame.getHeight()/HEIGHT);
 
-        selectionBoxes[0].setSize(typeSelector.getSize());
-        selectionBoxes[0].setLocation(typeSelector.getX()+125*frame.getWidth()/WIDTH, typeSelector.getY());
-        for(int i = 1; i < selectionBoxes.length; i++){
-            selectionBoxes[i].setSize(typeSelector.getSize());
-            selectionBoxes[i].setLocation(selectionBoxes[i-1].getX()+125*frame.getWidth()/WIDTH, selectionBoxes[i-1].getY());
-        }
+        JPanel card2 = new JPanel();
+        card2.add(new JTextField(Double.toString(Settings.dateWeight), 15));
+        card2.add(new JTextField(Double.toString(Settings.relativeCoachWeight), 5));
+        card2.add(new JTextField("Practice Match Weight", 5));
+        card2.add(new JTextField("Old Robot Weight", 5));
 
-        scoreFields[0].setSize((int) (textBoxSize.getWidth()/WIDTH*frame.getWidth()), (int) (textBoxSize.getHeight()/HEIGHT*frame.getHeight()));
-        scoreFields[0].setLocation(selectionBoxes[selectionBoxes.length-1].getX()+125*frame.getWidth()/WIDTH, typeSelector.getY());
-        for(int i = 1; i < scoreFields.length; i++){
-            scoreFields[i].setSize(scoreFields[0].getSize());
-            scoreFields[i].setLocation(scoreFields[i-1].getX()+125*frame.getWidth()/WIDTH, typeSelector.getY());
-        }
+        tabbedPane.addTab(INPUTPANEL, card1);
+        tabbedPane.addTab(SETTINGSPANEL, card2);
+
+        pane.add(tabbedPane, BorderLayout.CENTER);
     }
 
-
-    public Window(Main main, Team... teams){
-        this.main = main;
-        this.teams = teams;
+    /**
+     * Create the GUI and show it.  For thread safety,
+     * this method should be invoked from the
+     * event dispatch thread.
+     */
+    private void createAndShowGUI() {
+        //Create and set up the window.
+        JFrame frame = new JFrame("FTCStats");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(WIDTH, HEIGHT);
-        frame.setLocationRelativeTo(null);
 
-        //JLabel label = new JLabel("Some info");
-        spreadsheetButton = new JButton("Launch Spreadsheet");
-        JPanel panel = new JPanel();
-        panel.setLayout(null);
+        //Create and set up the content pane.
+        //TabDemo demo = new TabDemo();
+        addComponentToPane(frame.getContentPane());
 
-        spreadsheetButton.addActionListener(new DriversListListener() {
-            public void actionPerformed(ActionEvent e) {
-                main.saveAndLaunch();
-            }
-        });
-        spreadsheetButton.setSize(spButtonSize);
-        spreadsheetButton.setLocation(frame.getSize().width/2 - spreadsheetButton.getWidth()/2, 500);
-
-        int listX = 125, listY = 100;
-
-        typeSelector = new JComboBox(new String[] {"--select--", "Practice", "Competition"});
-        typeSelector.setSelectedIndex(0);
-        typeSelector.addActionListener(new TypeListener());
-        typeSelector.setSize(selBoxSize);
-        typeSelector.setLocation(listX,listY);
-        typeSelector.setName("Type");
-        panel.add(typeSelector);
-
-        for(JComboBox b : selectionBoxes){
-            b.setSelectedIndex(0);
-            b.addActionListener(new DriversListListener());
-            b.setSize(selBoxSize);
-            b.setLocation(listX+=150, listY);
-            panel.add(b);
-        }
-        selectionBoxes[0].setName("Drivers");
-        selectionBoxes[1].setName("Operators");
-        selectionBoxes[2].setName("Coaches");
-
-        listX+=25;
-
-        for(JTextField f : scoreFields){
-            f.setColumns(6);
-            f.setSize(textBoxSize);
-            f.setLocation(listX+=100, listY);
-            f.addFocusListener(new TextListener());
-            f.addActionListener(new TextListener());
-            panel.add(f);
-        }
-        scoreFields[0].setName("Total");
-        scoreFields[1].setName("Teleop");
-        scoreFields[2].setName("Auto");
-        scoreFields[3].setName("Penalties");
-
-        submitButton = new JButton("Submit");
-        submitButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                createEntry();
-            }
-        });
-        submitButton.setSize(subButtonSize);
-        submitButton.setLocation(frame.getSize().width/2 - submitButton.getWidth()/2, 200);
-
-        panel.add(spreadsheetButton);
-        panel.add(submitButton);
-
-        //frame.add(label, BorderLayout.NORTH);
-        frame.add(panel, BorderLayout.CENTER);
-
+        //Display the window.
+        frame.pack();
         frame.setVisible(true);
     }
 
-    public void createEntry(){
-        char type = TypeListener.getType();
-        String[] names = DriversListListener.getDrivers();
-        double[] scores = TextListener.getScores();
-
-        //TODO change this
-        XSSFWorkbook wb = teams[0].getWorkbook();
-        Utilities.writeEntry(wb, "Match Data", type, names, scores);
+    public Window(){
+        createAndShowGUI();
     }
 }
