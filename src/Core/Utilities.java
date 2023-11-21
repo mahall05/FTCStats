@@ -2,14 +2,13 @@ package Core;
 
 import Match.Match;
 import TeamMember.TeamMember;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.awt.*;
 import java.io.*;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,6 +49,40 @@ public class Utilities {
         Row row = sheet.createRow(i);
         row.createCell(0).setCellValue(String.valueOf(type));
         row.createCell(1);
+
+        for(int j = 0; j < names.length; j++){
+            row.createCell(j+2).setCellValue(names[j]);
+        }
+        for(int j = 0; j < scores.length; j++){
+            System.out.println(scores[j]);
+            row.createCell(j+2+names.length).setCellValue(scores[j]);
+        }
+    }
+
+    /**
+     * A method used for entering an entry of match data. Needs the match type, driver names, and scores associated
+     * @param wb The workbook to get the data from
+     * @param sheetName The name of the sheet to write the entry to
+     * @param type Match type. Needs to be either 'p' or 'c' for "practice" or "competition" respectively
+     * @param names The names of the drivers of the match. This method technically has no limit to array sizes, but this is intended to be 3
+     * @param scores The scores of the match in order of: total, teleop, auton, penalties.
+     */
+    public static void writeEntry(XSSFWorkbook wb, String sheetName, char type, LocalDate date, String[] names, double[] scores, String... comments){
+        XSSFSheet sheet = getSheetFromWorkbook(wb, sheetName);
+        int i = 0;
+        while(sheet.getRow(i)!=null&&sheet.getRow(i).getCell(0)!=null) i++;
+
+        Row row = sheet.createRow(i);
+        row.createCell(0).setCellValue(String.valueOf(type));
+        //row.createCell(1).setCellValue(date.toString());
+
+        //CreationHelper createHelper = wb.getCreationHelper();
+        CellStyle style = wb.createCellStyle();
+        style.setDataFormat((short) 16);
+        row.createCell(1).setCellValue(date);
+        row.getCell(1).setCellStyle(style);
+
+        //row.createCell(1).setCellValue(date.getMonthValue() + "/"+date.getDayOfMonth());
 
         for(int j = 0; j < names.length; j++){
             row.createCell(j+2).setCellValue(names[j]);

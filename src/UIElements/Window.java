@@ -1,6 +1,11 @@
 package UIElements;
 
 import Core.Settings;
+import TeamMember.Team;
+import com.toedter.calendar.JDateChooser;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +15,7 @@ public class Window {
     final static String SETTINGSPANEL = "Settings";
     final static int extraWindowWidth = 100;
     final static int extraWindowHeight = 300;
+    private Team team;
 
     public void addComponentToPane(Container pane) {
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -34,11 +40,13 @@ public class Window {
         JTextField te = new JTextField();
         JTextField au = new JTextField();
         JTextField pe = new JTextField();
+        JDateChooser date = new JDateChooser();
         to.setColumns(6);
         te.setColumns(6);
         au.setColumns(6);
         pe.setColumns(6);
         card1.add(ts);
+        card1.add(date);
         card1.add(d);
         card1.add(o);
         card1.add(c);
@@ -46,6 +54,12 @@ public class Window {
         card1.add(te);
         card1.add(au);
         card1.add(pe);
+        JButton su = new JButton("Submit");
+        su.addActionListener(new SubmitListener(team, date, ts, new JComboBox[] {d, o, c}, new JTextField[] {to, te, au, pe}));
+        JButton sb = new JButton("Spreadsheet");
+        sb.addActionListener(new SpreadsheetButtonListener(team));
+        card1.add(su);
+        card1.add(sb);
 
 
         JPanel card2 = new JPanel();
@@ -79,7 +93,8 @@ public class Window {
         frame.setVisible(true);
     }
 
-    public Window(){
+    public Window(Team team){
+        this.team = team;
         createAndShowGUI();
     }
 }

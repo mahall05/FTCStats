@@ -1,13 +1,16 @@
 package TeamMember;
 
 import Core.Main;
+import Core.Settings;
 import Core.Utilities;
 import TeamMember.*;
 import Match.Match;
 import jdk.jshell.execution.Util;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -124,5 +127,16 @@ public class Team {
 
     public XSSFWorkbook getWorkbook(){
         return workbook;
+    }
+
+    public void saveAndLaunch(){
+        saveWorkbook();
+        Utilities.launchSpreadsheet(Settings.redTeamDataFile);
+    }
+
+    public void writeMatchEntry(char type, LocalDate date, String[] names, double[] scores){
+        Utilities.writeEntry(workbook, "Match Data", type, date, names, scores);
+        new Team(this.workbook, this.drivers, this.operators, this.coaches, this.driveTeams);
+        //runCalculations();
     }
 }

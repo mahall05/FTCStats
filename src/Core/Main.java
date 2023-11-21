@@ -13,13 +13,13 @@ public class Main {
 
     private void runSetup(){
         XSSFWorkbook redTeamWorkbook = Utilities.getWorkbookFromFile(Settings.redTeamDataFile);
-        window = new Window(/*this, redTeam*/);
 
         redTeam = new Team(redTeamWorkbook,
                             new Driver[] {new Driver("Bredan"), new Driver("Erin"), new Driver("Luca")},
                             new Operator[] {new Operator("Mason"), new Operator("Zoe"), new Operator("Cyrus")},
                             new Coach[] {new Coach("Caleb"), new Coach("Matt"), new Coach("Zach")},
                             new String[][] {{"Bredan","Mason"},{"Erin","Zoe"},{"Luca","Cyrus"}});
+        window = new Window(redTeam);
     }
 
     private void start() {
@@ -34,11 +34,6 @@ public class Main {
     }
 
      */
-
-    public void saveAndLaunch(){
-        redTeam.saveWorkbook();
-        Utilities.launchSpreadsheet(Settings.redTeamDataFile);
-    }
 
     private Main(){
         start();
