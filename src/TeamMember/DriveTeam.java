@@ -160,8 +160,8 @@ public class DriveTeam {
     }
     public void calcPerCoachTheoreticalData(int i){
         for(int j = 0; j < tCoachIncludedAverages.length; j++){
-            double sums = (driver.getAverages()[i]*1 + operator.getAverages()[i]*1 + coaches[j].getAverages()[i]*0.5);
-            tCoachIncludedAverages[j][i] = sums/2.5;
+            double sums = (driver.getAverages()[i]*1 + operator.getAverages()[i]*1 + coaches[j].getAverages()[i]*Settings.relativeCoachWeight);
+            tCoachIncludedAverages[j][i] = sums/(2+Settings.relativeCoachWeight);
         }
     }
 
