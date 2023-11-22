@@ -61,12 +61,24 @@ public class Window {
         card1.add(su);
         card1.add(sb);
 
+        JTextField da = new JTextField(Double.toString(Settings.dateWeight), 15);
+        JTextField cw = new JTextField(Double.toString(Settings.relativeCoachWeight), 5);
+        JTextField pw = new JTextField(Double.toString(Settings.relativePracticeWeight), 5);
+        JTextField ow = new JTextField(Double.toString(Settings.relativeOldRobotWeight), 5);
 
         JPanel card2 = new JPanel();
-        card2.add(new JTextField(Double.toString(Settings.dateWeight), 15));
-        card2.add(new JTextField(Double.toString(Settings.relativeCoachWeight), 5));
-        card2.add(new JTextField("Practice Match Weight", 5));
-        card2.add(new JTextField("Old Robot Weight", 5));
+        card2.add(new JLabel("Date Weight"));
+        card2.add(da);
+        card2.add(new JLabel("Coach Weight"));
+        card2.add(cw);
+        card2.add(new JLabel("Practice Weight"));
+        card2.add(pw);
+        card2.add(new JLabel("Old Robot Weight"));
+        card2.add(ow);
+        JButton save = new JButton("Save");
+        save.addActionListener(new SaveButtonListener(team, da, cw, pw, ow));
+        card2.add(save);
+
 
         tabbedPane.addTab(INPUTPANEL, card1);
         tabbedPane.addTab(SETTINGSPANEL, card2);

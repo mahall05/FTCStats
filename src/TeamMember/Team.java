@@ -36,26 +36,22 @@ public class Team {
 
     public Team(XSSFWorkbook wb, Driver[] drivers, Operator[] operators, Coach[] coaches, DriveTeam[] driveTeams){
         this.workbook = wb;
-        this.matches = Utilities.getMatches(workbook, "Match Data");
+        loadMatches();
         this.drivers = drivers;
         this.operators = operators;
         this.coaches = coaches;
-        for(Match m : matches){
-            m.assign(drivers, operators, coaches);
-        }
+        assignMatches();
 
         this.driveTeams = driveTeams;
         runCalculations();
     }
     public Team(XSSFWorkbook wb, Driver[] drivers, Operator[] operators, Coach[] coaches, String[][] dtNames){
         this.workbook = wb;
-        this.matches = Utilities.getMatches(workbook, "Match Data");
+        loadMatches();
         this.drivers = drivers;
         this.operators = operators;
         this.coaches = coaches;
-        for(Match m : matches){
-            m.assign(drivers, operators, coaches);
-        }
+        assignMatches();
 
         DriveTeam[] driveTeams = new DriveTeam[dtNames.length];
         for(int i = 0; i < driveTeams.length; i++){
@@ -65,10 +61,19 @@ public class Team {
         runCalculations();
     }
 
+    public void loadMatches(){
+        matches = Utilities.getMatches(workbook, "Match Data");
+    }
+    public void assignMatches(){
+        for(Match m : matches){
+            m.assign(drivers, operators, coaches);
+        }
+    }
+
     /**
      * Runs the calculations of the drive teams. Calculates all the individual data, and then the drive team data
      */
-    private void runCalculations(){
+    public void runCalculations(){
         for(Driver d : drivers){
             d.calcAll();
         }
