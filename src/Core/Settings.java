@@ -1,5 +1,7 @@
 package Core;
 
+import java.time.LocalDate;
+
 public class Settings {
     public static final String redTeamDataFile = "Red Team Data.xlsx";
 
@@ -12,6 +14,7 @@ public class Settings {
     public static double relativePracticeWeight = 0.25;
     /* The relative weight of matches with the old robot when compared to the new robot */
     public static double relativeOldRobotWeight = 0.25;
+    public static LocalDate newRobotDate = LocalDate.of(2023, 11, 14);
 
     /* Team Member Settings */
     public static double dateWeight = 0.0294117647;

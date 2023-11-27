@@ -34,8 +34,8 @@ public class Team {
     private double weightedAutonAvg;
     private double weightedPenaltyAvg;
 
-    public Team(XSSFWorkbook wb, Driver[] drivers, Operator[] operators, Coach[] coaches, DriveTeam[] driveTeams){
-        this.workbook = wb;
+    public Team(Driver[] drivers, Operator[] operators, Coach[] coaches, DriveTeam[] driveTeams){
+        this.workbook = Utilities.getWorkbookFromFile(Settings.redTeamDataFile);
         loadMatches();
         this.drivers = drivers;
         this.operators = operators;
@@ -45,8 +45,8 @@ public class Team {
         this.driveTeams = driveTeams;
         runCalculations();
     }
-    public Team(XSSFWorkbook wb, Driver[] drivers, Operator[] operators, Coach[] coaches, String[][] dtNames){
-        this.workbook = wb;
+    public Team(Driver[] drivers, Operator[] operators, Coach[] coaches, String[][] dtNames){
+        this.workbook = Utilities.getWorkbookFromFile(Settings.redTeamDataFile);
         loadMatches();
         this.drivers = drivers;
         this.operators = operators;
@@ -62,7 +62,7 @@ public class Team {
     }
 
     public void loadMatches(){
-        matches = Utilities.getMatches(workbook, "Match Data");
+        matches = Utilities.getMatches(Utilities.getWorkbookFromFile(Settings.redTeamDataFile), "Match Data");
     }
     public void assignMatches(){
         for(Match m : matches){
@@ -135,13 +135,23 @@ public class Team {
     }
 
     public void saveAndLaunch(){
-        saveWorkbook();
+        workbook = Utilities.getWorkbookFromFile(Settings.redTeamDataFile);
+        loadCalcSave();
         Utilities.launchSpreadsheet(Settings.redTeamDataFile);
     }
 
     public void writeMatchEntry(char type, LocalDate date, String[] names, double[] scores){
+        workbook = Utilities.getWorkbookFromFile(Settings.redTeamDataFile);
         Utilities.writeEntry(workbook, "Match Data", type, date, names, scores);
-        new Team(this.workbook, this.drivers, this.operators, this.coaches, this.driveTeams);
+        //new Team(this.workbook, this.drivers, this.operators, this.coaches, this.driveTeams);
+        loadCalcSave();
         //runCalculations();
+    }
+
+    private void loadCalcSave(){
+        loadMatches();
+        assignMatches();
+        runCalculations();
+        saveWorkbook();
     }
 }

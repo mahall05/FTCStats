@@ -33,7 +33,7 @@ public class Window {
             }
         };
         JComboBox ts = new JComboBox(new String[] {"--select--", "Practice", "Competition"});
-        JComboBox d = new JComboBox(new String[] {"--select--", "Braden", "Erin", "Luca"});
+        JComboBox d = new JComboBox(new String[] {"--select--", "Bredan", "Erin", "Luca"});
         JComboBox o = new JComboBox(new String[] {"--select--", "Mason", "Zoe", "Cyrus"});
         JComboBox c = new JComboBox(new String[] {"--select--", "Caleb", "Matt", "Zach"});
         JTextField to = new JTextField();

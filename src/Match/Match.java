@@ -25,7 +25,7 @@ public class Match {
     private int[] scores;
 
     private void calcWeight(){
-        double weightFromOldRobot = date.isBefore(LocalDate.of(2023, 11, 14)) ? Settings.relativeOldRobotWeight : 1;
+        double weightFromOldRobot = date.isBefore(Settings.newRobotDate) ? Settings.relativeOldRobotWeight : 1;
         double weightFromType = type == Type.PRACTICE ? Settings.relativePracticeWeight : 1;
         relativeWeight = 1.0 * weightFromType * weightFromOldRobot;
     }

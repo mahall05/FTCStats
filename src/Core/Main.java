@@ -12,9 +12,7 @@ public class Main {
     private Team redTeam;
 
     private void runSetup(){
-        XSSFWorkbook redTeamWorkbook = Utilities.getWorkbookFromFile(Settings.redTeamDataFile);
-
-        redTeam = new Team(redTeamWorkbook,
+        redTeam = new Team(
                             new Driver[] {new Driver("Bredan"), new Driver("Erin"), new Driver("Luca")},
                             new Operator[] {new Operator("Mason"), new Operator("Zoe"), new Operator("Cyrus")},
                             new Coach[] {new Coach("Caleb"), new Coach("Matt"), new Coach("Zach")},
