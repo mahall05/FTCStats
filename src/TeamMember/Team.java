@@ -148,7 +148,7 @@ public class Team {
         //runCalculations();
     }
 
-    private void loadCalcSave(){
+    public void loadCalcSave(){
         loadMatches();
         assignMatches();
         runCalculations();

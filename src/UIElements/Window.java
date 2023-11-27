@@ -94,7 +94,7 @@ public class Window {
     private void createAndShowGUI() {
         //Create and set up the window.
         JFrame frame = new JFrame("FTCStats");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(/*closeOperation()*/ JFrame.EXIT_ON_CLOSE);
 
         //Create and set up the content pane.
         //TabDemo demo = new TabDemo();
@@ -103,6 +103,11 @@ public class Window {
         //Display the window.
         frame.pack();
         frame.setVisible(true);
+    }
+
+    private int closeOperation(){
+        team.loadCalcSave();
+        return JFrame.EXIT_ON_CLOSE;
     }
 
     public Window(Team team){
