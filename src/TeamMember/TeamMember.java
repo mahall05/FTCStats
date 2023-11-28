@@ -104,4 +104,8 @@ public abstract class TeamMember {
     public double[] getDivisors(){
         return divisors;
     }
+
+    public void eraseMatches(){
+        matches = new ArrayList<Match>();
+    }
 }

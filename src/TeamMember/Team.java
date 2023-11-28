@@ -65,6 +65,15 @@ public class Team {
         matches = Utilities.getMatches(Utilities.getWorkbookFromFile(Settings.redTeamDataFile), "Match Data");
     }
     public void assignMatches(){
+        for(Driver d : drivers){
+            d.eraseMatches();
+        }
+        for(Operator o : operators){
+            o.eraseMatches();
+        }
+        for(Coach c : coaches){
+            c.eraseMatches();
+        }
         for(Match m : matches){
             m.assign(drivers, operators, coaches);
         }
