@@ -34,7 +34,7 @@ public class Team {
     private double weightedAutonAvg;
     private double weightedPenaltyAvg;
 
-    public Team(Driver[] drivers, Operator[] operators, Coach[] coaches, DriveTeam[] driveTeams){
+    public Team(Driver[] drivers, Operator[] operators, Coach[] coaches){
         this.workbook = Utilities.getWorkbookFromFile(Settings.redTeamDataFile);
         loadMatches();
         this.drivers = drivers;
@@ -42,21 +42,13 @@ public class Team {
         this.coaches = coaches;
         assignMatches();
 
-        this.driveTeams = driveTeams;
-        runCalculations();
-    }
-    public Team(Driver[] drivers, Operator[] operators, Coach[] coaches, String[][] dtNames){
-        this.workbook = Utilities.getWorkbookFromFile(Settings.redTeamDataFile);
-        loadMatches();
-        this.drivers = drivers;
-        this.operators = operators;
-        this.coaches = coaches;
-        assignMatches();
-
-        DriveTeam[] driveTeams = new DriveTeam[dtNames.length];
-        for(int i = 0; i < driveTeams.length; i++){
-            driveTeams[i] = new DriveTeam((Driver) Utilities.findByName(drivers,dtNames[i][0]), (Operator) Utilities.findByName(operators,dtNames[i][1]), coaches, matches);
+        DriveTeam[] driveTeams = new DriveTeam[drivers.length*operators.length];
+        for(int i = 0; i < drivers.length*operators.length; i+=operators.length){
+            for(int j = 0; j < operators.length; j++){
+                driveTeams[i+j] = new DriveTeam(drivers[i/operators.length], operators[j], coaches, matches);
+            }
         }
+
         this.driveTeams = driveTeams;
         runCalculations();
     }

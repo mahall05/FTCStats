@@ -15,8 +15,8 @@ public class Main {
         redTeam = new Team(
                             new Driver[] {new Driver("Bredan"), new Driver("Erin"), new Driver("Luca")},
                             new Operator[] {new Operator("Mason"), new Operator("Zoe"), new Operator("Cyrus")},
-                            new Coach[] {new Coach("Caleb"), new Coach("Matt"), new Coach("Zach")},
-                            new String[][] {{"Bredan","Mason"},{"Erin","Zoe"},{"Luca","Cyrus"}});
+                            new Coach[] {new Coach("Caleb"), new Coach("Matt"), new Coach("Zach")}
+                );
         window = new Window(redTeam);
     }
 

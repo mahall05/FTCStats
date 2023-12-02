@@ -35,6 +35,7 @@ public class DriveTeam {
     private double[][] coachIncludedUnweightedSampleSizes = new double[3][4];
 
     public ArrayList<Double> getGroupedTheoreticalData(){
+        System.out.println(driver.getName() + " + " + operator.getName() + " Total: " + tDuoAverages[0]);
         ArrayList<Double> a = new ArrayList<Double>();
 
         for(int i = 0; i < tDuoAverages.length; i++){
