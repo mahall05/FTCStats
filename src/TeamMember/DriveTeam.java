@@ -13,64 +13,50 @@ public class DriveTeam {
     private String name;
 
     /* THEORETICAL AVERAGES */
-    private double[] tDuoAverages = new double[4];
-    private double[] tDuoStdDevs = new double[4];
-    private double[] tDuoSampleSizes = new double[4];
-    private double[] getDuoUnweightedSampleSizes = new double[4];
+    private double[] tDuoAverages = new double[9];
+    private double[] tDuoStdDevs = new double[9];
+    private double[] tDuoSampleSizes = new double[9];
+    private double[] getDuoUnweightedSampleSizes = new double[9];
 
-    private double[][] tCoachIncludedAverages = new double[3][4];
-    private double[][] tCoachIncludedStdDevs = new double[3][4];
-    private double[][] tCoachIncludedSampleSizes = new double[3][4];
-    private double[][] getCoachIncludedUnweightedSampleSizes = new double[3][4];
+    private double[][] tCoachIncludedAverages = new double[3][9];
+    private double[][] tCoachIncludedStdDevs = new double[3][9];
+    private double[][] tCoachIncludedSampleSizes = new double[3][9];
+    private double[][] getCoachIncludedUnweightedSampleSizes = new double[3][9];
 
     /* EXPERIMENTAL AVERAGES */
-    private double[] duoAverages = new double[4];
-    private double[] duoStdDevs = new double[4];
-    private double[] duoSampleSizes = new double[4];
-    private double[] duoUnweightedSampleSizes = new double[4];
+    private double[] duoAverages = new double[9];
+    private double[] duoStdDevs = new double[9];
+    private double[] duoSampleSizes = new double[9];
+    private double[] duoUnweightedSampleSizes = new double[9];
 
-    private double[][] coachIncludedAverages = new double[3][4];
-    private double[][] coachIncludedStdDevs = new double[3][4];
-    private double[][] coachIncludedSampleSizes = new double[3][4];
-    private double[][] coachIncludedUnweightedSampleSizes = new double[3][4];
+    private double[][] coachIncludedAverages = new double[3][9];
+    private double[][] coachIncludedStdDevs = new double[3][9];
+    private double[][] coachIncludedSampleSizes = new double[3][9];
+    private double[][] coachIncludedUnweightedSampleSizes = new double[3][9];
 
-    public ArrayList<Double> getGroupedTheoreticalData(){
-        //System.out.println(driver.getName() + " + " + operator.getName() + " Total: " + tDuoAverages[0]);
+    private double[] theoreticalGrades = new double[4];
+    private double[] experimentalGrades = new double[4];
+
+    public ArrayList<Double> getGroupedData(int i){
         ArrayList<Double> a = new ArrayList<Double>();
 
-        for(int i = 0; i < tDuoAverages.length; i++){
-            a.add(tDuoAverages[i]);
-        }
-        for(int i = 0; i < tCoachIncludedAverages.length; i++){
-            for(int j = 0; j < tCoachIncludedAverages[i].length; j++) {
-                a.add(tCoachIncludedAverages[i][j]);
+        for(int j = 0; j < tDuoAverages.length; j++){
+            if(i == 0){
+                a.add(tDuoAverages[j]);
+            }else{
+                a.add(tCoachIncludedAverages[i-1][j]);
             }
         }
-
-        return a;
-    }
-    /**
-     * Get the Averages of Total, Teleop, Auton, Penalties, and weighted averages in that order
-     * Used to write the information to the workbook
-     * @return An ArrayList containing data associated with the drive team.
-     */
-    public ArrayList<Double> getGroupedExperimentalData(){
-        ArrayList<Double> a = new ArrayList<Double>();
-
-        for(int i = 0; i < duoAverages.length; i++){
-            a.add(duoAverages[i]);
-            //a.add(duoStdDevs[i]);
-            //a.add(duoSampleSizes[i]);
-            //a.add(duoUnweightedSampleSizes[i]);
-        }
-        for(int i = 0; i < coachIncludedAverages.length; i++){
-            for(int j = 0; j < coachIncludedAverages[i].length; j++){
-                a.add(coachIncludedAverages[i][j]);
-                //a.add(coachIncludedStdDevs[i][j]);
-                //a.add(coachIncludedSampleSizes[i][j]);
-                //a.add(coachIncludedUnweightedSampleSizes[i][j]);
+        a.add(theoreticalGrades[i]);
+        for(int j = 0; j < duoAverages.length; j++){
+            if(i == 0){
+                a.add(duoAverages[j]);
+            }else{
+                a.add(coachIncludedAverages[i-1][j]);
             }
         }
+        a.add(experimentalGrades[i]);
+
         return a;
     }
 
@@ -88,6 +74,34 @@ public class DriveTeam {
             }
         }
         else System.out.println("False");
+
+        tDuoAverages[8] *= -1;
+        duoAverages[8] *= -1;
+        for(int i = 0; i < coachIncludedAverages.length; i++){
+            tCoachIncludedAverages[i][8] *= -1;
+            coachIncludedAverages[i][8] *= -1;
+        }
+
+                        // Total, auton, teleop, cycles, pixels, mosaics, set lines, endgame, penalties
+        double[] weights = {1, 0.5, 5, 2, 2, 4, 4, 3, 5};
+        double sum = 0;
+        for(int i = 0; i < weights.length; i++){
+            sum += weights[i];
+        }
+        for(int i = 0; i < coaches.length+1; i++){
+            for(int j = 0; j < duoAverages.length; j++){
+                if(i == 0){
+                    theoreticalGrades[i] += tDuoAverages[j]*weights[j];
+                    experimentalGrades[i] += duoAverages[j]*weights[j];
+                }else{
+                    theoreticalGrades[i] += tCoachIncludedAverages[i-1][j];
+                    experimentalGrades[i] += coachIncludedAverages[i-1][j];
+                }
+            }
+
+            theoreticalGrades[i] /= sum;
+            experimentalGrades[i] /= sum;
+        }
 
         //System.out.println(toStringWeighted());
     }

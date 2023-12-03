@@ -15,16 +15,18 @@ public abstract class TeamMember {
     private String name;
     private ArrayList<Match> matches;
 
-    private double[] averages = new double[4];
+    private double[] averages = new double[9];
 
     //private double[] weightedAverages = new double[4];
 
-    private double[] dividends = new double[4];
-    private double[] divisors = new double[4];
+    private double[] dividends = new double[9];
+    private double[] divisors = new double[9];
 
     public ArrayList<Double> getGroupedData(){
+        System.out.println(name);
         ArrayList<Double> a = new ArrayList<Double>();
         for(Double d : averages){
+            System.out.println("      " + d);
             a.add(d);
         }
         /*

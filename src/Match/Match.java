@@ -21,7 +21,7 @@ public class Match {
 
     private double relativeWeight;
 
-    // Total, Teleop, Auton, Penalties
+    // Total, Auton, Teleop, Cycles, Scored Pixels, Mosaics, Set Lines, Endgame, Penalties
     private int[] scores;
 
     private void calcWeight(){

@@ -120,12 +120,17 @@ public class Utilities {
                     row.getCell(4)==null||row.getCell(4).getCellType()==CellType.BLANK?"":row.getCell(4).getStringCellValue(),         // Drive Coach
                     new int[] {
                             row.getCell(5) == null || row.getCell(5).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(5).getNumericCellValue(),  // Total Score
-                            row.getCell(6) == null || row.getCell(6).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(6).getNumericCellValue(),  // Teleop Score
-                            row.getCell(7) == null || row.getCell(7).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(7).getNumericCellValue(),  // Auton Score
-                            row.getCell(8) == null || row.getCell(8).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(8).getNumericCellValue()   // Penalties
+                            row.getCell(6) == null || row.getCell(6).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(6).getNumericCellValue(),  // Auton Score
+                            row.getCell(7) == null || row.getCell(7).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(7).getNumericCellValue(),  // Teleop Score
+                            row.getCell(8) == null || row.getCell(8).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(8).getNumericCellValue(),   // Cycles
+                            row.getCell(9) == null || row.getCell(9).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(9).getNumericCellValue(),  // Scored Pixels
+                            row.getCell(10) == null || row.getCell(10).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(10).getNumericCellValue(),  // Mosaics
+                            row.getCell(11) == null || row.getCell(11).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(11).getNumericCellValue(),  // Set Lines
+                            row.getCell(12) == null || row.getCell(12).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(12).getNumericCellValue(),  // Endgame
+                            row.getCell(13) == null || row.getCell(13).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(13).getNumericCellValue()  // Penalties
                     }
             ));
-            if(row.getCell(9)!=null && row.getCell(9).getStringCellValue().equals("**")){
+            if(row.getCell(14)!=null && row.getCell(14).getStringCellValue().equals("**")){
                 matches.removeLast();
             }
         }

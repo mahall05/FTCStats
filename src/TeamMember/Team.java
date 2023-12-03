@@ -116,13 +116,12 @@ public class Team {
     public void writeDriveTeamData(){
         Map<Integer, ArrayList<Double>> dataMap = new HashMap<Integer, ArrayList<Double>>();
 
-        int row = 0;
-        for(DriveTeam dt : driveTeams){
-            dataMap.put(row++, dt.getGroupedTheoreticalData());
-        }
-        row+=3;
-        for(DriveTeam dt : driveTeams){
-            dataMap.put(row++, dt.getGroupedExperimentalData());
+        int row = 1;
+        for(int i = 0; i < coaches.length+1; i++){
+            for(DriveTeam dt : driveTeams){
+                dataMap.put(row++, dt.getGroupedData(i));
+            }
+            row+=2;
         }
         Utilities.writeDatamapToSheet(3, Utilities.getSheetFromWorkbook(workbook, "Drive Team Data"), dataMap);
     }
