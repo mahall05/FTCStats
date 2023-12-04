@@ -14,10 +14,21 @@ public class Settings {
     public static double relativePracticeWeight = 0.25;
     /* The relative weight of matches with the old robot when compared to the new robot */
     public static double relativeOldRobotWeight = 0.25;
-    public static LocalDate newRobotDate = LocalDate.of(2023, 11, 27);
+    public static LocalDate newRobotDate = LocalDate.of(2023, 11, 14);
 
     /* Team Member Settings */
     public static double dateWeight = 0.0294117647;
+
+    public static double[] scoreWeights = { /*Total*/ 4,
+                                            /*Auton*/ 2,
+                                            /*Teleop*/ 20,
+                                            /*Cycles*/ 8,
+                                            /*Pixels*/ 8,
+                                            /*Mosaics*/ 16,
+                                            /*SetLines*/ 14,
+                                            /*Endgame*/ 12,
+                                            /*Penalties*/ 16
+                                            };
 
     /* Drive Team Settings */
 

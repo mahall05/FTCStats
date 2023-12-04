@@ -22,6 +22,8 @@ public abstract class TeamMember {
     private double[] dividends = new double[9];
     private double[] divisors = new double[9];
 
+    private double grade;
+
     public ArrayList<Double> getGroupedData(){
         System.out.println(name);
         ArrayList<Double> a = new ArrayList<Double>();
@@ -29,6 +31,7 @@ public abstract class TeamMember {
             System.out.println("      " + d);
             a.add(d);
         }
+        a.add(grade);
         /*
         for(Double d : weightedAverages){
             a.add(d);
@@ -54,6 +57,16 @@ public abstract class TeamMember {
         for(int i = 0; i < averages.length; i++){
             averages[i] = calcAverage(0, i);
         }
+
+        averages[averages.length-1] *= -1;
+
+        double sum = 0;
+        for(int i = 0; i < Settings.scoreWeights.length; i++){
+            sum += Settings.scoreWeights[i];
+            grade += averages[i]*Settings.scoreWeights[i];
+        }
+
+        grade /= sum;
     }
 
     private double calcAverage(double weight, int i){

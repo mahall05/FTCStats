@@ -75,24 +75,20 @@ public class DriveTeam {
         }
         else System.out.println("False");
 
-        tDuoAverages[8] *= -1;
-        duoAverages[8] *= -1;
+        duoAverages[duoAverages.length-1] *= -1;
         for(int i = 0; i < coachIncludedAverages.length; i++){
-            tCoachIncludedAverages[i][8] *= -1;
-            coachIncludedAverages[i][8] *= -1;
+            coachIncludedAverages[i][coachIncludedAverages[i].length-1] *= -1;
         }
 
-                        // Total, auton, teleop, cycles, pixels, mosaics, set lines, endgame, penalties
-        double[] weights = {1, 0.5, 5, 2, 2, 4, 4, 3, 5};
         double sum = 0;
-        for(int i = 0; i < weights.length; i++){
-            sum += weights[i];
+        for(int i = 0; i < Settings.scoreWeights.length; i++){
+            sum += Settings.scoreWeights[i];
         }
         for(int i = 0; i < coaches.length+1; i++){
             for(int j = 0; j < duoAverages.length; j++){
                 if(i == 0){
-                    theoreticalGrades[i] += tDuoAverages[j]*weights[j];
-                    experimentalGrades[i] += duoAverages[j]*weights[j];
+                    theoreticalGrades[i] += tDuoAverages[j]*Settings.scoreWeights[j];
+                    experimentalGrades[i] += duoAverages[j]*Settings.scoreWeights[j];
                 }else{
                     theoreticalGrades[i] += tCoachIncludedAverages[i-1][j];
                     experimentalGrades[i] += coachIncludedAverages[i-1][j];
