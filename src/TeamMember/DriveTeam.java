@@ -60,7 +60,7 @@ public class DriveTeam {
         return a;
     }
 
-    public void calcAll(double[] teamAverages){
+    public void calcAll(double[] teamAverages, double[] teamStdDevs){
         duoAverages = new double[teamAverages.length];
         tDuoAverages = new double[teamAverages.length];
         coachIncludedAverages = new double[coaches.length][teamAverages.length];

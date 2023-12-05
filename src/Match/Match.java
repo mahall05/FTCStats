@@ -29,12 +29,14 @@ public class Match {
         double weightFromOldRobot = date.isBefore(Settings.newRobotDate) ? Settings.relativeOldRobotWeight : 1;
         double weightFromType = type == Type.PRACTICE ? Settings.relativePracticeWeight : 1;
         long daysAgo = ChronoUnit.DAYS.between(getDate(), LocalDate.now());
-        double dateWeight = 1-Settings.dateWeight*daysAgo;
+        double dateWeight = 1-Settings.dateWeight*daysAgo*weightFromType*weightFromOldRobot;
         relativeWeight = 1.0 * weightFromType * weightFromOldRobot * dateWeight;
+
         if(relativeWeight < 0){
             relativeWeight = 0;
         }
-        relativeWeight=1;
+        //relativeWeight=1;
+
     }
 
     public Match(String type, LocalDate date, String driver, String operator, String driveCoach, int[] scores){

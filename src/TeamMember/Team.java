@@ -77,21 +77,21 @@ public class Team {
         for(int i = 0; i < weightedAverages.length; i++){
             weightedAverages[i] = calcAverage(0, i);
             weightedStdDevs[i] = calcWeightedStdDev(0, i);
-            System.out.println("Avg: "+weightedAverages[i]);
-            System.out.println("Std Dev: "+weightedStdDevs[i]);
+            //System.out.println("Avg: "+weightedAverages[i]);
+            //System.out.println("Std Dev: "+weightedStdDevs[i]);
         }
         weightedAverages[weightedAverages.length-1] *= -1;
         for(Driver d : drivers){
-            d.calcAll(weightedAverages);
+            d.calcAll(weightedAverages, weightedStdDevs);
         }
         for(Operator o : operators){
-            o.calcAll(weightedAverages);
+            o.calcAll(weightedAverages, weightedStdDevs);
         }
         for(Coach c : coaches){
-            c.calcAll(weightedAverages);
+            c.calcAll(weightedAverages, weightedStdDevs);
         }
         for(DriveTeam dt : driveTeams){
-            dt.calcAll(weightedAverages);
+            dt.calcAll(weightedAverages, weightedStdDevs);
         }
         writeTeamData();
         writePerMemberData();
@@ -169,14 +169,22 @@ public class Team {
         Map<Integer, ArrayList<Double>> dataMap = new HashMap<Integer, ArrayList<Double>>();
 
         int row = 2;
-        dataMap.put(row, getGroupedTeamData());
+        dataMap.put(row, getGroupedTeamAverages());
+        dataMap.put(row+1, getGroupedTeamStdDevs());
         Utilities.writeDatamapToSheet(0, Utilities.getSheetFromWorkbook(workbook, "Team Data"), dataMap);
     }
 
-    public ArrayList<Double> getGroupedTeamData(){
+    public ArrayList<Double> getGroupedTeamAverages(){
         ArrayList<Double> a = new ArrayList<Double>();
         for(int i = 0; i < weightedAverages.length; i++){
             a.add(weightedAverages[i]);
+        }
+        return a;
+    }
+    public ArrayList<Double> getGroupedTeamStdDevs(){
+        ArrayList<Double> a = new ArrayList<Double>();
+        for(int i = 0; i < weightedStdDevs.length; i++){
+            a.add(weightedStdDevs[i]);
         }
         return a;
     }
