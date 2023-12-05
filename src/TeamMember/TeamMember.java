@@ -85,8 +85,15 @@ public abstract class TeamMember {
             long daysAgo = ChronoUnit.DAYS.between(m.getDate(), LocalDate.now());
 
             if(s>=0){
-                sum += s*(1-Settings.dateWeight*daysAgo);
-                n += m.getRelativeWeight()*(1-Settings.dateWeight*daysAgo);
+                double num = s*(1-Settings.dateWeight*daysAgo);
+                double w = m.getRelativeWeight()*(1-Settings.dateWeight*daysAgo);
+                if(num < 0 || w < 0){
+                    num = 0;
+                    w = 0;
+                }
+
+                sum += num;
+                n += w;
             }
         }
         if(weight == 0) {
