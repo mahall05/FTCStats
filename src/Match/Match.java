@@ -6,6 +6,7 @@ import TeamMember.Driver;
 import TeamMember.Operator;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class Match {
     private Type type;
@@ -27,7 +28,12 @@ public class Match {
     private void calcWeight(){
         double weightFromOldRobot = date.isBefore(Settings.newRobotDate) ? Settings.relativeOldRobotWeight : 1;
         double weightFromType = type == Type.PRACTICE ? Settings.relativePracticeWeight : 1;
-        relativeWeight = 1.0 * weightFromType * weightFromOldRobot;
+        long daysAgo = ChronoUnit.DAYS.between(getDate(), LocalDate.now());
+        double dateWeight = 1-Settings.dateWeight*daysAgo;
+        relativeWeight = 1.0 * weightFromType * weightFromOldRobot * dateWeight;
+        if(relativeWeight < 0){
+            relativeWeight = 0;
+        }
     }
 
     public Match(String type, LocalDate date, String driver, String operator, String driveCoach, int[] scores){

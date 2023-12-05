@@ -17,11 +17,6 @@ public abstract class TeamMember {
 
     private double[] averages;
 
-    //private double[] weightedAverages = new double[4];
-
-    private double[] dividends = new double[9];
-    private double[] divisors = new double[9];
-
     private double grade;
 
     public ArrayList<Double> getGroupedData(){
@@ -82,23 +77,11 @@ public abstract class TeamMember {
 
         for(Match m : matches){
             double s = m.getWeightedScore(i);
-            long daysAgo = ChronoUnit.DAYS.between(m.getDate(), LocalDate.now());
 
             if(s>=0){
-                double num = s*(1-Settings.dateWeight*daysAgo);
-                double w = m.getRelativeWeight()*(1-Settings.dateWeight*daysAgo);
-                if(num < 0 || w < 0){
-                    num = 0;
-                    w = 0;
-                }
-
-                sum += num;
-                n += w;
+                sum += s;
+                n += m.getRelativeWeight();
             }
-        }
-        if(weight == 0) {
-            divisors[i] = n;
-            dividends[i] = sum;
         }
 
         return (n==0?0:sum/n);
@@ -126,13 +109,6 @@ public abstract class TeamMember {
      */
 
     public enum Type{DRIVER, OPERATOR, COACH}
-
-    public double[] getDividends(){
-        return dividends;
-    }
-    public double[] getDivisors(){
-        return divisors;
-    }
 
     public void eraseMatches(){
         matches = new ArrayList<Match>();
