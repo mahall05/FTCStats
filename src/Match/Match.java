@@ -34,6 +34,7 @@ public class Match {
         if(relativeWeight < 0){
             relativeWeight = 0;
         }
+        relativeWeight=1;
     }
 
     public Match(String type, LocalDate date, String driver, String operator, String driveCoach, int[] scores){

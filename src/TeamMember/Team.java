@@ -24,10 +24,12 @@ public class Team {
     XSSFWorkbook workbook; // The team's workbook
 
     /* Averages */
-    private double[] overallAverages;
+    private double[] weightedAverages;
+    private double[] weightedStdDevs;
 
     public Team(Driver[] drivers, Operator[] operators, Coach[] coaches, String fileName){
-        overallAverages = new double[Settings.scoreWeights.length];
+        weightedAverages = new double[Settings.scoreWeights.length];
+        weightedStdDevs = new double[Settings.scoreWeights.length];
         this.workbook = Utilities.getWorkbookFromFile(fileName);
         loadMatches();
         this.drivers = drivers;
@@ -68,24 +70,28 @@ public class Team {
      * Runs the calculations of the drive teams. Calculates all the individual data, and then the drive team data
      */
     public void runCalculations(){
-        for(int i = 0; i < overallAverages.length; i++){
-            overallAverages[i] = -1;
+        for(int i = 0; i < weightedAverages.length; i++){
+            weightedAverages[i] = -1;
+            weightedStdDevs[i] = -1;
         }
-        for(int i = 0; i < overallAverages.length; i++){
-            overallAverages[i] = calcAverage(0, i);
+        for(int i = 0; i < weightedAverages.length; i++){
+            weightedAverages[i] = calcAverage(0, i);
+            weightedStdDevs[i] = calcWeightedStdDev(0, i);
+            System.out.println("Avg: "+weightedAverages[i]);
+            System.out.println("Std Dev: "+weightedStdDevs[i]);
         }
-        overallAverages[overallAverages.length-1] *= -1;
+        weightedAverages[weightedAverages.length-1] *= -1;
         for(Driver d : drivers){
-            d.calcAll(overallAverages);
+            d.calcAll(weightedAverages);
         }
         for(Operator o : operators){
-            o.calcAll(overallAverages);
+            o.calcAll(weightedAverages);
         }
         for(Coach c : coaches){
-            c.calcAll(overallAverages);
+            c.calcAll(weightedAverages);
         }
         for(DriveTeam dt : driveTeams){
-            dt.calcAll(overallAverages);
+            dt.calcAll(weightedAverages);
         }
         writeTeamData();
         writePerMemberData();
@@ -106,6 +112,23 @@ public class Team {
         }
 
         return (n==0?0:sum/n);
+    }
+    private double calcWeightedStdDev(double weight, int i){
+        double numeratorSum = 0;
+        for(Match m : matches){
+            numeratorSum += (m.getRelativeWeight()*(Math.pow(m.getWeightedScore(i) - weightedAverages[i], 2)));
+        }
+        double weightSum = 0;
+        double nonZeroWeights = 0;
+        for(Match m : matches){
+            weightSum += m.getRelativeWeight();
+            if(m.getRelativeWeight() > 0) nonZeroWeights++;
+        }
+        double nonzeroWeightsFrac = (nonZeroWeights-1)/nonZeroWeights;
+
+        double variation = numeratorSum / (nonzeroWeightsFrac*weightSum);
+
+        return (Math.sqrt(variation));
     }
 
     /**
@@ -152,8 +175,8 @@ public class Team {
 
     public ArrayList<Double> getGroupedTeamData(){
         ArrayList<Double> a = new ArrayList<Double>();
-        for(int i = 0; i < overallAverages.length; i++){
-            a.add(overallAverages[i]);
+        for(int i = 0; i < weightedAverages.length; i++){
+            a.add(weightedAverages[i]);
         }
         return a;
     }
