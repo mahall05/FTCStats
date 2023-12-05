@@ -34,6 +34,9 @@ public class DriveTeam {
     //private double[][] coachIncludedSampleSizes = new double[3][9];
     //private double[][] coachIncludedUnweightedSampleSizes = new double[3][9];
 
+    private double[][] tzscores = new double[4][9];
+    private double[][] ezscores = new double[4][9];
+
     private double[] theoreticalGrades = new double[4];
     private double[] experimentalGrades = new double[4];
 
@@ -80,29 +83,30 @@ public class DriveTeam {
         else System.out.println("False");
 
         duoAverages[duoAverages.length-1] *= -1;
-        for(int i = 0; i < coachIncludedAverages.length; i++){
-            coachIncludedAverages[i][coachIncludedAverages[i].length-1] *= -1;
+        for(int i = 0; i < coachIncludedAverages.length; i++) {
+            coachIncludedAverages[i][coachIncludedAverages[i].length - 1] *= -1;
         }
-
-
-        for(int i = 0; i < coaches.length+1; i++){
-            double[] tgrades = new double[teamAverages.length];
-            double[] egrades = new double[teamAverages.length];
-            for(int j = 0; j < teamAverages.length; j++){
-                tgrades[j] = ((i==0?(double)tDuoAverages[j]:(double)tCoachIncludedAverages[i-1][j])/teamAverages[j])*100;
-                egrades[j] = ((i==0?(double)duoAverages[j]:(double)coachIncludedAverages[i-1][j])/teamAverages[j])*100;
-            }
-            double sum = 0;
-            for(int j = 0; j < Settings.scoreWeights.length; j++){
-                sum += Settings.scoreWeights[j];
-                theoreticalGrades[i] += tgrades[j]*Settings.scoreWeights[j];
-                experimentalGrades[i] += egrades[j]*Settings.scoreWeights[j];
-            }
-            theoreticalGrades[i] /= sum;
-            experimentalGrades[i] /= sum;
-        }
-
         //System.out.println(toStringWeighted());
+
+        calcGrades(teamAverages, teamStdDevs);
+    }
+
+    private void calcGrades(double[] teamAverages, double[] teamStdDevs){
+        for(int i = 0; i < tzscores.length; i++){
+            theoreticalGrades[i] = 0;
+            experimentalGrades[i] = 0;
+            double weightSum = 0;
+            for(int j = 0; j < tzscores[i].length; j++){
+                tzscores[i][j] = ((i==0?tDuoAverages[j]:tCoachIncludedAverages[i-1][j])-teamAverages[j])/teamStdDevs[j];
+                theoreticalGrades[i] += tzscores[i][j]*Settings.scoreWeights[j];
+
+                ezscores[i][j] = ((i==0?duoAverages[j]:coachIncludedAverages[i-1][j])-teamAverages[j])/teamStdDevs[j];
+                experimentalGrades[i] += ezscores[i][j]*Settings.scoreWeights[j];
+                weightSum += Settings.scoreWeights[j];
+            }
+            theoreticalGrades[i] = theoreticalGrades[i] / weightSum * 100;
+            experimentalGrades[i] = experimentalGrades[i] / weightSum * 100;
+        }
     }
 
     public void calcDuoOnlyData(int i){
