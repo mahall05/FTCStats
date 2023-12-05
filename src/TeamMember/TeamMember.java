@@ -15,7 +15,7 @@ public abstract class TeamMember {
     private String name;
     private ArrayList<Match> matches;
 
-    private double[] averages = new double[9];
+    private double[] averages;
 
     //private double[] weightedAverages = new double[4];
 
@@ -25,10 +25,10 @@ public abstract class TeamMember {
     private double grade;
 
     public ArrayList<Double> getGroupedData(){
-        System.out.println(name);
+        //System.out.println(name);
         ArrayList<Double> a = new ArrayList<Double>();
         for(Double d : averages){
-            System.out.println("      " + d);
+            //System.out.println("      " + d);
             a.add(d);
         }
         a.add(grade);
@@ -45,27 +45,34 @@ public abstract class TeamMember {
         this.type = type;
         this.name = name;
 
+        matches = new ArrayList<Match>();
+    }
+
+    public void calcAll(double[] teamAverages){
+        averages = new double[teamAverages.length];
+
+        // First set everything to -1 just in case
         for(int i = 0; i < averages.length; i++){
             averages[i] = -1;
             //weightedAverages[i] = -1;
         }
-
-        matches = new ArrayList<Match>();
-    }
-
-    public void calcAll(){
         for(int i = 0; i < averages.length; i++){
             averages[i] = calcAverage(0, i);
         }
 
         averages[averages.length-1] *= -1;
 
+        double[] grades = new double[teamAverages.length];
         double sum = 0;
+        System.out.println(name);
+        for(int i = 0; i < teamAverages.length; i++){
+            grades[i] = (double) averages[i] / (double) teamAverages[i] * 100;
+            System.out.println("     "+grades[i]);
+        }
         for(int i = 0; i < Settings.scoreWeights.length; i++){
             sum += Settings.scoreWeights[i];
-            grade += averages[i]*Settings.scoreWeights[i];
+            grade += grades[i]*Settings.scoreWeights[i];
         }
-
         grade /= sum;
     }
 

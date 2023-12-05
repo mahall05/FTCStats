@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public class Settings {
     public static final String redTeamDataFile = "Red Team Data.xlsx";
+    public static final String greenTeamDataFile = "Green Team Data.xlsx";
 
     // Change weight of competition matches vs practice matches
     // Change weight of new matches with the new robot

@@ -10,13 +10,24 @@ public class Main {
 
     private Window window;
     private Team redTeam;
+    private Team greenTeam;
 
     private void runSetup(){
         redTeam = new Team(
                             new Driver[] {new Driver("Bredan"), new Driver("Erin"), new Driver("Luca")},
                             new Operator[] {new Operator("Mason"), new Operator("Zoe"), new Operator("Cyrus")},
-                            new Coach[] {new Coach("Caleb"), new Coach("Matt"), new Coach("Zach")}
+                            new Coach[] {new Coach("Caleb"), new Coach("Matt"), new Coach("Zach")},
+                Settings.redTeamDataFile
                 );
+        /*
+        greenTeam = new Team(
+                new Driver[] {new Driver("Nathan"), new Driver("Chloe"), new Driver("Apollo"), new Driver("Sarah")},
+                new Operator[] {new Operator("Emily"), new Operator("Jonah"), new Operator("Cole"), new Operator("Sam")},
+                new Coach[] {new Coach("Ayda"), new Coach("Heidi"), new Coach("Josh")},
+                Settings.greenTeamDataFile
+        );
+
+         */
         window = new Window(redTeam);
     }
 

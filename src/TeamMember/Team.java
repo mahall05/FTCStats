@@ -9,6 +9,7 @@ import jdk.jshell.execution.Util;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,20 +23,12 @@ public class Team {
     ArrayList<Match> matches = new ArrayList<Match>();
     XSSFWorkbook workbook; // The team's workbook
 
-    /* Basic Averages */
-    private double matchAvg;
-    private double teleopAvg;
-    private double autonAvg;
-    private double penaltyAvg;
+    /* Averages */
+    private double[] overallAverages;
 
-    /* Date Weighted Averages */
-    private double weightedMatchAvg;
-    private double weightedTeleopAvg;
-    private double weightedAutonAvg;
-    private double weightedPenaltyAvg;
-
-    public Team(Driver[] drivers, Operator[] operators, Coach[] coaches){
-        this.workbook = Utilities.getWorkbookFromFile(Settings.redTeamDataFile);
+    public Team(Driver[] drivers, Operator[] operators, Coach[] coaches, String fileName){
+        overallAverages = new double[Settings.scoreWeights.length];
+        this.workbook = Utilities.getWorkbookFromFile(fileName);
         loadMatches();
         this.drivers = drivers;
         this.operators = operators;
@@ -75,20 +68,45 @@ public class Team {
      * Runs the calculations of the drive teams. Calculates all the individual data, and then the drive team data
      */
     public void runCalculations(){
+        for(int i = 0; i < overallAverages.length; i++){
+            overallAverages[i] = -1;
+        }
+        for(int i = 0; i < overallAverages.length; i++){
+            overallAverages[i] = calcAverage(0, i);
+        }
+        overallAverages[overallAverages.length-1] *= -1;
         for(Driver d : drivers){
-            d.calcAll();
+            d.calcAll(overallAverages);
         }
         for(Operator o : operators){
-            o.calcAll();
+            o.calcAll(overallAverages);
         }
         for(Coach c : coaches){
-            c.calcAll();
+            c.calcAll(overallAverages);
         }
         for(DriveTeam dt : driveTeams){
-            dt.calcAll();
+            dt.calcAll(overallAverages);
         }
+        writeTeamData();
         writePerMemberData();
         writeDriveTeamData();
+    }
+
+    private double calcAverage(double weight, int i){
+        double sum = 0;
+        double n = 0;
+
+        for(Match m : matches){
+            double s = m.getWeightedScore(i);
+            long daysAgo = ChronoUnit.DAYS.between(m.getDate(), LocalDate.now());
+
+            if(s>=0){
+                sum += s*(1-Settings.dateWeight*daysAgo);
+                n += m.getRelativeWeight()*(1-Settings.dateWeight*daysAgo);
+            }
+        }
+
+        return (n==0?0:sum/n);
     }
 
     /**
@@ -124,6 +142,21 @@ public class Team {
             row+=2;
         }
         Utilities.writeDatamapToSheet(3, Utilities.getSheetFromWorkbook(workbook, "Drive Team Data"), dataMap);
+    }
+    public void writeTeamData(){
+        Map<Integer, ArrayList<Double>> dataMap = new HashMap<Integer, ArrayList<Double>>();
+
+        int row = 2;
+        dataMap.put(row, getGroupedTeamData());
+        Utilities.writeDatamapToSheet(0, Utilities.getSheetFromWorkbook(workbook, "Team Data"), dataMap);
+    }
+
+    public ArrayList<Double> getGroupedTeamData(){
+        ArrayList<Double> a = new ArrayList<Double>();
+        for(int i = 0; i < overallAverages.length; i++){
+            a.add(overallAverages[i]);
+        }
+        return a;
     }
 
     public void saveWorkbook(){
