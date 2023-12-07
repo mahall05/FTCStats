@@ -14,7 +14,7 @@ public class Settings {
     /* The relative weight of practice matches when compared to real competition matches */
     public static double relativePracticeWeight = 0.25;
     /* The relative weight of matches with the old robot when compared to the new robot */
-    public static double relativeOldRobotWeight = 0.25;
+    public static double relativeOldRobotWeight = 0.0;
     public static LocalDate newRobotDate = LocalDate.of(2023, 11, 14);
 
     /* Team Member Settings */
