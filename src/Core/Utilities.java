@@ -130,10 +130,14 @@ public class Utilities {
                             row.getCell(13) == null || row.getCell(13).getCellType() == CellType.BLANK ? -1 : (int) row.getCell(13).getNumericCellValue()  // Penalties
                     }
             ));
-            if(row.getCell(14)!=null && row.getCell(14).getStringCellValue().equals("**")){
-                matches.removeLast();
+            if(row.getCell(15)!=null && row.getCell(15).getStringCellValue().equals("**")){
+                matches.get(i-1).setRelativeWeight(0);
             }
+
+            Cell weightCell = row.getCell(14) == null ? row.createCell(14) : row.getCell(14);
+            weightCell.setCellValue(matches.get(i-1).getRelativeWeight());
         }
+        writeWorkbookToSpreadsheet(Settings.redTeamDataFile, wb);
         return matches;
     }
 

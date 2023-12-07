@@ -84,6 +84,7 @@ public class Match {
     public double getRelativeWeight(){
         return relativeWeight;
     }
+    public void setRelativeWeight(double weight){this.relativeWeight = weight;}
 
     public LocalDate getDate(){
         return date;
