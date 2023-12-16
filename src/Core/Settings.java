@@ -18,17 +18,17 @@ public class Settings {
     public static LocalDate newRobotDate = LocalDate.of(2023, 11, 14);
 
     /* Team Member Settings */
-    public static double dateWeight = 0.0285714286;
+    public static double dateWeight = 0.02;//0.0285714286;
 
-    public static double[] scoreWeights = { /*Total 4*/ 4,
-                                            /*Auton 2*/ 2,
-                                            /*Teleop 20*/ 20,
-                                            /*Cycles 8*/ 8,
-                                            /*Pixels 8*/ 8,
-                                            /*Mosaics 16*/ 16,
-                                            /*SetLines 14*/ 14,
-                                            /*Endgame 12*/ 12,
-                                            /*Penalties 16*/ 16
+    public static double[] scoreWeights = { /*Total*/ 4,
+                                            /*Auton*/ 2,
+                                            /*Teleop*/ 24,
+                                            /*Cycles*/ 10,
+                                            /*Pixels*/ 8,
+                                            /*Mosaics*/ 16,
+                                            /*SetLines*/ 16,
+                                            /*Endgame*/ 4,
+                                            /*Penalties*/ 16
                                             };
 
     /* Drive Team Settings */

@@ -29,7 +29,8 @@ public class Match {
         double weightFromOldRobot = date.isBefore(Settings.newRobotDate) ? Settings.relativeOldRobotWeight : 1;
         double weightFromType = type == Type.PRACTICE ? Settings.relativePracticeWeight : 1;
         long daysAgo = ChronoUnit.DAYS.between(getDate(), LocalDate.now());
-        double dateWeight = 1-Settings.dateWeight*daysAgo*weightFromType*weightFromOldRobot;
+        double dateWeight = 1.0 - Settings.dateWeight*daysAgo;
+
         relativeWeight = 1.0 * weightFromType * weightFromOldRobot * dateWeight;
 
         if(relativeWeight < 0){
