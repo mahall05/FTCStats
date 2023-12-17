@@ -31,7 +31,8 @@ public class Match {
         long daysAgo = ChronoUnit.DAYS.between(getDate(), LocalDate.now());
 
         relativeWeight = weightFromOldRobot*weightFromType;
-        double dateWeight = relativeWeight / (30.0);
+        double dateWeight = relativeWeight / (Settings.maxWeightedDay);
+        if(Double.isNaN(dateWeight) || Double.isInfinite(dateWeight)){dateWeight=0.0;}
         relativeWeight = relativeWeight - dateWeight*daysAgo;
     }
 

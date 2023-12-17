@@ -156,7 +156,7 @@ public class DriveTeam {
 
         for(int j = 0; j < coaches.length; j++){
             for(Match m : matchHistory){
-                if(m.getCoach().equals(coaches[j])){
+                if(m.getCoach() != null && m.getCoach().equals(coaches[j])){
                     double s = m.getWeightedScore(i);
 
                     if(s >= 0){
